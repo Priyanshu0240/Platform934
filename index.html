@@ -16,33 +16,85 @@ body{font-family:'Crimson Pro',serif;background:var(--obsidian);color:#d1d5db;he
 .tbar{background:rgba(8,8,14,.72);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,.1);}
 .split{width:1px;height:65%;background:linear-gradient(to bottom,transparent,rgba(163,133,75,.3),transparent);}
 .station-sign{width:100px;height:100px;border:3px solid #fef3c7;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#000;}
-.role-btn{transition:all .2s;color:#71717a;cursor:pointer;}
+.role-btn{transition:all .2s;color:#71717a;}
 .role-btn.active{border-color:var(--gold)!important;color:#fff;background:rgba(163,133,75,.15);box-shadow:0 0 14px rgba(163,133,75,.2);}
-.vbox{position:relative;border-radius:1.5rem;overflow:hidden;background:#111;border:1px solid rgba(255,255,255,.06);height:100%;}
+.vbox{position:relative;border-radius:1.5rem;overflow:hidden;background:#111;border:1px solid rgba(255,255,255,.06);}
 video{width:100%;height:100%;object-fit:cover;pointer-events:none;display:block;}
-.artifact{position:absolute;cursor:grab;user-select:none;z-index:100;touch-action:none;}
+.artifact{position:absolute;cursor:grab;user-select:none;z-index:60;touch-action:none;}
 .artifact:active{cursor:grabbing;}
-.artifact img{width:100%;height:auto;pointer-events:none;display:block;filter:drop-shadow(0 10px 20px rgba(0,0,0,0.6));}
+.artifact img{width:100%;height:auto;pointer-events:none;display:block;filter:drop-shadow(0 4px 18px rgba(0,0,0,.8));}
 .scroll-gold::-webkit-scrollbar{width:3px;}
 .scroll-gold::-webkit-scrollbar-thumb{background:var(--gold);border-radius:10px;}
-#art-menu{display:none;position:absolute;bottom:calc(100%+15px);left:50%;transform:translateX(-50%);width:220px;z-index:400;}
-#art-menu.open{display:flex;flex-direction:column;}
+.chat-msg{padding:7px 11px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);font-size:.78rem;line-height:1.4;}
+.chat-sender{font-size:.58rem;text-transform:uppercase;letter-spacing:.13em;color:var(--gold);margin-bottom:2px;font-family:'Cinzel',serif;}
+.chat-msg.system{background:rgba(163,133,75,.08);border-color:rgba(163,133,75,.15);text-align:center;font-style:italic;color:#a3854b;font-size:.7rem;}
+.friend-item{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:12px;cursor:pointer;transition:background .15s;}
+.friend-item:hover{background:rgba(255,255,255,.04);}
+.online-dot{width:8px;height:8px;border-radius:50%;background:#22c55e;flex-shrink:0;}
+.offline-dot{width:8px;height:8px;border-radius:50%;background:#52525b;flex-shrink:0;}
+input{color:#e5e7eb;}
+input::placeholder{color:#3f3f46;}
 
 /* Pages */
-#landing,#dashboard{position:absolute;inset:0;}
-#dashboard{display:none;}
-#dashboard.active{display:flex;flex-direction:column;}
+#landing,#dashboard,#fs-page{position:absolute;inset:0;}
+#dashboard,#fs-page{display:none;}
+#dashboard.active{display:flex;}
+#fs-page.active{display:flex;}
 
-@media(min-width:768px){
-  #dashboard.active{flex-direction:row;}
+/* Dashboard layout */
+#dashboard{flex-direction:column;}
+@media(min-width:768px){#dashboard{flex-direction:row;}}
+
+/* Sidebar tabs */
+.stab{padding:6px 14px;border-radius:20px;font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;cursor:pointer;transition:all .2s;color:#52525b;font-family:'Cinzel',serif;}
+.stab.active{background:rgba(163,133,75,.15);color:#d4b46a;border:1px solid rgba(163,133,75,.25);}
+
+/* Artifact menu */
+#art-menu{display:none;position:absolute;bottom:calc(100% + 10px);left:50%;transform:translateX(-50%);width:220px;z-index:400;}
+#art-menu.open{display:flex;flex-direction:column;}
+
+/* Bottom nav */
+#bottom-nav{position:relative;z-index:300;}
+
+/* FS page */
+#fs-page{flex-direction:column;background:#000;}
+#fs-video-wrap{flex:1;position:relative;overflow:hidden;}
+#fs-remote-video{width:100%;height:100%;object-fit:cover;}
+
+/* FS controls - hidden until hover/tap */
+#fs-ui{position:absolute;inset:0;z-index:90;pointer-events:none;transition:opacity .35s;}
+#fs-ui.visible{pointer-events:auto;}
+#fs-ui.hidden-ui{opacity:0!important;}
+#fs-ui.hidden-ui *{pointer-events:none!important;}
+
+/* top bar */
+#fs-top{position:absolute;top:0;left:0;right:0;padding:16px 20px;display:flex;align-items:center;justify-between;gap:12px;background:linear-gradient(to bottom,rgba(0,0,0,.6),transparent);pointer-events:auto;}
+/* bottom bar */
+#fs-bottom{position:absolute;bottom:0;left:0;right:0;padding:16px 20px;display:flex;align-items:flex-end;gap:12px;background:linear-gradient(to top,rgba(0,0,0,.55),transparent);}
+#fs-ctrl-bar{display:flex;align-items:center;gap:12px;background:rgba(8,8,14,.65);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.1);padding:10px 20px;border-radius:2rem;pointer-events:auto;}
+
+/* FS side chat */
+#fs-chat-side{position:absolute;top:0;right:0;bottom:0;width:min(300px,85vw);background:rgba(8,8,14,.72);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-left:1px solid rgba(163,133,75,.12);display:none;flex-direction:column;z-index:95;pointer-events:auto;}
+#fs-chat-side.open{display:flex;}
+
+/* Floating PiP */
+.pip-float{position:absolute;border-radius:.8rem;overflow:hidden;background:#000;border:2px solid rgba(163,133,75,.3);z-index:80;cursor:move;min-width:80px;min-height:60px;}
+.pip-resize{position:absolute;bottom:0;right:0;width:14px;height:14px;cursor:se-resize;background:linear-gradient(135deg,transparent 50%,rgba(163,133,75,.6) 50%);z-index:81;}
+
+/* Room badge */
+.room-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(163,133,75,.12);border:1px solid rgba(163,133,75,.25);padding:4px 10px;border-radius:20px;font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:#d4b46a;font-family:'Cinzel',serif;}
+
+@media(max-width:767px){
+  #sidebar{width:100%!important;max-height:200px;min-height:180px;}
+  #main-area{min-height:0;flex:1;}
+  #video-grid{grid-template-columns:1fr 1fr!important;}
+  #bottom-nav{padding:8px 16px!important;gap:14px!important;}
 }
-
-.companion-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;height:100%;width:100%;background:rgba(10,10,16,0.8);}
 </style>
 </head>
 <body>
 
-<!-- ═══════ LANDING ═══════ -->
+<!-- ═══════════════ LANDING ═══════════════ -->
 <div id="landing" class="flex flex-col md:flex-row items-center justify-center p-6 overflow-hidden">
   <div class="absolute w-[600px] h-[600px] bg-purple-900/5 blur-[150px] rounded-full pointer-events-none"></div>
   <div class="flex-1 flex flex-col items-center md:items-end md:pr-14 text-center md:text-right mb-10 md:mb-0">
@@ -53,7 +105,7 @@ video{width:100%;height:100%;object-fit:cover;pointer-events:none;display:block;
     </div>
     <h1 class="cinzel text-3xl md:text-5xl font-bold text-white mb-2 uppercase">Way to Hogwarts</h1>
     <h2 class="cinzel text-lg md:text-2xl font-light text-amber-600 mb-3 italic">The Wizarding School</h2>
-    <p class="text-zinc-600 uppercase tracking-[.3em] text-[10px]">(Muggles strictly prohibited)</p>
+    <p class="text-zinc-600 uppercase tracking-[.3em] text-[10px]">(No Muggles Allowed)</p>
   </div>
   <div class="hidden md:block split"></div>
   <div class="flex-1 flex flex-col items-center md:items-start md:pl-14 w-full">
@@ -63,19 +115,19 @@ video{width:100%;height:100%;object-fit:cover;pointer-events:none;display:block;
         <div>
           <p class="text-[9px] uppercase tracking-widest text-zinc-600 mb-2.5 ml-1 cinzel">Identity</p>
           <div class="flex gap-2">
-            <button id="btn-wizard" class="role-btn active flex-1 py-3.5 border border-white/5 rounded-2xl text-[10px] uppercase tracking-widest font-bold cinzel">Wizard</button>
+            <button id="btn-wizard" class="role-btn flex-1 py-3.5 border border-white/5 rounded-2xl text-[10px] uppercase tracking-widest font-bold cinzel">Wizard</button>
             <button id="btn-witch" class="role-btn flex-1 py-3.5 border border-white/5 rounded-2xl text-[10px] uppercase tracking-widest font-bold cinzel">Witch</button>
           </div>
         </div>
         <div>
           <p class="text-[9px] uppercase tracking-widest text-zinc-600 mb-2.5 ml-1 cinzel">Wizarding Name</p>
-          <input id="user-name" type="text" placeholder="e.g. Albus" class="w-full bg-black/40 border border-amber-900/20 rounded-2xl px-5 py-3.5 focus:outline-none focus:border-amber-700/40 italic text-sm text-white"/>
+          <input id="user-name" type="text" placeholder="e.g. Albus" class="w-full bg-black/40 border border-amber-900/20 rounded-2xl px-5 py-3.5 focus:outline-none focus:border-amber-700/40 italic text-sm"/>
         </div>
         <div>
           <p class="text-[9px] uppercase tracking-widest text-zinc-600 mb-2.5 ml-1 cinzel">Room Code</p>
           <div class="flex gap-2">
-            <input id="room-code-input" type="text" placeholder="Enter or create..." class="flex-1 bg-black/40 border border-amber-900/20 rounded-2xl px-5 py-3.5 focus:outline-none focus:border-amber-700/40 italic text-sm text-white"/>
-            <button id="gen-room-btn" class="px-4 py-3.5 glass rounded-2xl text-amber-600 hover:text-amber-400 text-[10px] cinzel uppercase tracking-widest transition">New</button>
+            <input id="room-code-input" type="text" placeholder="Enter or create..." class="flex-1 bg-black/40 border border-amber-900/20 rounded-2xl px-5 py-3.5 focus:outline-none focus:border-amber-700/40 italic text-sm"/>
+            <button id="gen-room-btn" class="px-4 py-3.5 glass rounded-2xl text-amber-600 hover:text-amber-400 text-xs cinzel uppercase tracking-widest transition">New</button>
           </div>
         </div>
         <button id="apparate-btn" class="w-full bg-zinc-100 text-black font-bold py-4 rounded-2xl hover:bg-white transition active:scale-95 text-[10px] uppercase tracking-[.2em] shadow-xl cinzel">Apparate</button>
@@ -84,37 +136,46 @@ video{width:100%;height:100%;object-fit:cover;pointer-events:none;display:block;
   </div>
 </div>
 
-<!-- ═══════ DASHBOARD ═══════ -->
+<!-- ═══════════════ DASHBOARD ═══════════════ -->
 <div id="dashboard" class="h-screen p-3 gap-3">
+
+  <!-- Main area -->
   <div id="main-area" class="flex-1 flex flex-col gap-3 min-w-0">
-    <div id="video-grid" class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-3 min-h-0">
-      
-      <!-- Self View -->
-      <div id="local-box" class="vbox">
+
+    <!-- Video grid -->
+    <div id="video-grid" class="flex-1 grid gap-3" style="grid-template-columns:1fr 1fr;min-height:0;">
+      <!-- Self -->
+      <div id="local-box" class="vbox" style="position:relative;">
         <video id="local-video" autoplay muted playsinline class="scale-x-[-1]"></video>
         <div class="absolute bottom-3 left-3 tbar px-3 py-1 rounded-xl text-[9px] uppercase tracking-widest text-amber-200 cinzel" id="local-label">Wizard</div>
-      </div>
-
-      <!-- Companion View -->
-      <div id="companion-box" class="vbox group">
-        <div id="companion-placeholder" class="companion-placeholder">
-          <div class="w-16 h-16 rounded-full glass flex items-center justify-center text-3xl">🦉</div>
-          <p class="cinzel text-zinc-600 text-[10px] uppercase tracking-widest text-center px-4">Waiting for Owl Post...<br/><span class="text-zinc-700">Share your room code to start</span></p>
+        <!-- corner pip for dual mode -->
+        <div id="corner-pip" class="pip-float" style="display:none;width:140px;height:95px;bottom:10px;right:10px;">
+          <video id="corner-vid" autoplay muted playsinline></video>
+          <div id="corner-resize" class="pip-resize"></div>
         </div>
-        <video id="remote-video" autoplay playsinline class="hidden"></video>
+      </div>
+      <!-- Companion -->
+      <div id="companion-box" class="vbox group" style="position:relative;">
+        <video id="remote-video" autoplay playsinline></video>
+        <div class="absolute bottom-3 left-3 tbar px-3 py-1 rounded-xl text-[9px] uppercase tracking-widest text-zinc-500 cinzel">Companion</div>
+        <button id="open-fs-btn" class="absolute top-3 right-3 p-2.5 glass rounded-xl opacity-0 group-hover:opacity-100 md:opacity-0 opacity-100 transition text-amber-100/60 hover:text-amber-300">
+          <i data-lucide="expand" size="18"></i>
+        </button>
       </div>
     </div>
 
-    <!-- Bottom Navigation -->
-    <div id="bottom-nav" class="glass w-fit mx-auto px-7 py-3.5 rounded-[2rem] flex items-center gap-6 shadow-2xl relative z-[300]">
-      <button id="mic-btn" class="text-zinc-500 hover:text-white transition p-1"><i data-lucide="mic"></i></button>
-      <button id="cam-btn" class="text-zinc-500 hover:text-white transition p-1"><i data-lucide="video"></i></button>
-      
-      <!-- Artifacts Menu -->
-      <div class="relative" id="art-wrap">
-        <button id="art-btn" class="text-zinc-500 hover:text-amber-400 transition p-1"><i data-lucide="sparkles"></i></button>
+    <!-- Bottom nav -->
+    <div id="bottom-nav" class="glass w-fit mx-auto px-7 py-3.5 rounded-[2rem] flex items-center gap-7 shadow-2xl flex-wrap justify-center">
+      <button id="mic-btn" class="text-zinc-500 hover:text-white transition p-1"><i data-lucide="mic" size="20"></i></button>
+      <button id="cam-btn" class="text-zinc-500 hover:text-white transition p-1"><i data-lucide="video" size="20"></i></button>
+      <button id="screen-btn" class="text-zinc-500 hover:text-amber-400 transition p-1"><i data-lucide="monitor" size="20"></i></button>
+      <button id="dual-btn" class="text-zinc-500 hover:text-amber-400 transition p-1 hidden"><i data-lucide="picture-in-picture-2" size="20"></i></button>
+
+      <!-- Artifacts -->
+      <div style="position:relative;" id="art-wrap">
+        <button id="art-btn" class="text-zinc-500 hover:text-amber-400 transition p-1"><i data-lucide="sparkles" size="20"></i></button>
         <div id="art-menu" class="glass border border-white/10 shadow-2xl rounded-2xl p-2.5 w-52">
-          <div class="text-[8px] uppercase tracking-widest text-zinc-600 px-3 py-2 cinzel">Summon Artifact</div>
+          <div class="text-[8px] uppercase tracking-widest text-zinc-600 px-3 py-2 cinzel">Summon Prop</div>
           <div id="art-list" class="max-h-60 overflow-y-auto scroll-gold flex flex-col gap-0.5"></div>
           <button id="clear-art-btn" class="w-full text-[10px] uppercase tracking-widest p-2.5 hover:bg-red-900/15 rounded-xl text-red-600 mt-1 border-t border-white/5 cinzel">Finite Incantatem</button>
         </div>
@@ -124,155 +185,555 @@ video{width:100%;height:100%;object-fit:cover;pointer-events:none;display:block;
       <button id="leave-btn" class="bg-red-950/20 text-red-500 p-2.5 rounded-xl hover:bg-red-500 hover:text-white transition"><i data-lucide="log-out" size="18"></i></button>
     </div>
   </div>
+
+  <!-- Sidebar -->
+  <div id="sidebar" class="w-full md:w-72 flex flex-col">
+    <div class="glass rounded-2xl flex flex-col overflow-hidden h-full">
+
+      <!-- Room badge -->
+      <div class="px-4 pt-4 pb-0">
+        <div class="room-badge w-full justify-center" id="room-display">
+          <i data-lucide="key" size="11"></i>
+          <span id="room-label">Room: ——</span>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="flex gap-2 p-3 pb-0 justify-center">
+        <button class="stab active" data-tab="chat" id="tab-chat">Owl Post</button>
+        <button class="stab" data-tab="friends" id="tab-friends">Friends</button>
+        <button class="stab" data-tab="room" id="tab-room">Room</button>
+      </div>
+
+      <!-- Chat tab -->
+      <div id="tab-content-chat" class="flex-1 flex flex-col overflow-hidden">
+        <div id="chat-stream" class="flex-1 p-3 overflow-y-auto scroll-gold flex flex-col gap-2 min-h-0">
+          <p class="text-center italic text-zinc-700 text-xs uppercase tracking-[.2em] mt-8 cinzel">Awaiting owls...</p>
+        </div>
+        <div class="p-3 border-t border-white/5" style="position:relative;">
+          <input id="chat-input" type="text" placeholder="Write message..." class="w-full bg-black/20 border border-white/5 rounded-2xl py-3 px-4 focus:outline-none focus:border-amber-900/25 text-sm italic pr-10"/>
+          <button id="send-btn" class="absolute right-5 top-1/2 -translate-y-1/2 text-amber-800 hover:text-amber-500 p-1"><i data-lucide="send-horizontal" size="16"></i></button>
+        </div>
+      </div>
+
+      <!-- Friends tab -->
+      <div id="tab-content-friends" class="flex-1 flex flex-col overflow-hidden hidden">
+        <div class="p-3 border-b border-white/5" style="position:relative;">
+          <input id="friend-input" type="text" placeholder="Add friend by name..." class="w-full bg-black/20 border border-white/5 rounded-2xl py-2.5 px-4 focus:outline-none text-xs italic pr-10"/>
+          <button id="add-friend-btn" class="absolute right-5 top-1/2 -translate-y-1/2 text-amber-800 hover:text-amber-500 p-1"><i data-lucide="user-plus" size="15"></i></button>
+        </div>
+        <div id="friend-list" class="flex-1 p-2 overflow-y-auto scroll-gold flex flex-col gap-1">
+          <p class="text-center italic text-zinc-700 text-xs uppercase tracking-[.15em] mt-8 cinzel">No companions yet...</p>
+        </div>
+      </div>
+
+      <!-- Room tab -->
+      <div id="tab-content-room" class="flex-1 flex flex-col overflow-hidden hidden p-4 gap-3">
+        <div>
+          <p class="text-[9px] uppercase tracking-widest text-zinc-600 mb-2 cinzel">Your Room Code</p>
+          <div class="flex gap-2">
+            <div id="room-code-display" class="flex-1 bg-black/30 border border-amber-900/20 rounded-xl px-4 py-2.5 text-amber-300 text-sm cinzel tracking-widest">——</div>
+            <button id="copy-room-btn" class="p-2.5 glass rounded-xl text-amber-700 hover:text-amber-400 transition"><i data-lucide="copy" size="15"></i></button>
+          </div>
+        </div>
+        <div>
+          <p class="text-[9px] uppercase tracking-widest text-zinc-600 mb-2 cinzel">Invite a Friend</p>
+          <div class="flex gap-2">
+            <input id="invite-input" type="text" placeholder="Friend's name..." class="flex-1 bg-black/20 border border-white/5 rounded-xl py-2.5 px-4 focus:outline-none text-xs italic"/>
+            <button id="invite-btn" class="px-3 glass rounded-xl text-amber-700 hover:text-amber-400 text-[9px] cinzel uppercase tracking-widest transition">Invite</button>
+          </div>
+        </div>
+        <div>
+          <p class="text-[9px] uppercase tracking-widest text-zinc-600 mb-2 cinzel">Members</p>
+          <div id="room-members" class="flex flex-col gap-1.5 text-xs text-zinc-400"></div>
+        </div>
+        <div class="mt-auto">
+          <button id="new-room-btn" class="w-full glass border border-amber-900/20 rounded-xl py-2.5 text-[9px] uppercase tracking-widest text-amber-700 hover:text-amber-400 transition cinzel">Generate New Room</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ FULLSCREEN PAGE ═══════════════ -->
+<div id="fs-page" class="flex-col">
+  <div id="fs-video-wrap" class="flex-1" style="position:relative;overflow:hidden;">
+    <video id="fs-remote-video" autoplay playsinline></video>
+
+    <!-- UI layer -->
+    <div id="fs-ui" class="visible">
+
+      <!-- Top bar -->
+      <div id="fs-top" style="pointer-events:auto;">
+        <div class="flex-1"></div>
+        <span class="room-badge" id="fs-room-badge"><i data-lucide="key" size="10"></i><span id="fs-room-label">——</span></span>
+        <div class="flex-1 flex justify-end">
+          <button id="fs-exit-btn" class="tbar p-2 rounded-xl text-zinc-400 hover:text-red-400 transition ml-auto"><i data-lucide="shrink" size="18"></i></button>
+        </div>
+      </div>
+
+      <!-- Side chat panel -->
+      <div id="fs-chat-side">
+        <div class="p-4 border-b border-white/5 flex items-center justify-between">
+          <span class="cinzel text-xs text-amber-100/40 uppercase tracking-widest">Owl Post</span>
+          <button id="fs-chat-close" class="text-zinc-600 hover:text-zinc-300 p-1"><i data-lucide="x" size="14"></i></button>
+        </div>
+        <div id="fs-chat-stream" class="flex-1 p-3 overflow-y-auto scroll-gold flex flex-col gap-2 min-h-0"></div>
+        <div class="p-3 border-t border-white/5" style="position:relative;">
+          <input id="fs-chat-input" type="text" placeholder="Write message..." class="w-full bg-black/30 border border-white/5 rounded-2xl py-3 px-4 focus:outline-none text-sm italic pr-10"/>
+          <button id="fs-send-btn" class="absolute right-5 top-1/2 -translate-y-1/2 text-amber-800 hover:text-amber-500 p-1"><i data-lucide="send-horizontal" size="15"></i></button>
+        </div>
+      </div>
+
+      <!-- Bottom controls -->
+      <div id="fs-bottom">
+        <div id="fs-ctrl-bar">
+          <button id="fs-mic-btn" class="text-zinc-300 hover:text-white transition p-1"><i data-lucide="mic" size="20"></i></button>
+          <button id="fs-cam-btn" class="text-zinc-300 hover:text-white transition p-1"><i data-lucide="video" size="20"></i></button>
+          <div class="w-px h-4 bg-white/20"></div>
+          <button id="fs-chat-toggle" class="text-zinc-400 hover:text-amber-400 transition p-1"><i data-lucide="message-circle" size="20"></i></button>
+          <button id="fs-pip-btn" class="text-zinc-400 hover:text-amber-400 transition p-1"><i data-lucide="picture-in-picture" size="20"></i></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- floating self-view PiP inside FS -->
+    <div id="fs-pip" class="pip-float" style="display:none;width:150px;height:100px;bottom:80px;right:16px;">
+      <video id="fs-pip-video" autoplay muted playsinline class="scale-x-[-1]"></video>
+      <div id="fs-pip-resize" class="pip-resize"></div>
+    </div>
+  </div>
 </div>
 
 <script>
-// Initialize Lucide Icons
 lucide.createIcons();
 
-let role = 'Wizard';
-let myName = '';
-let roomCode = '';
-let camStream = null;
+/* ── State ── */
+let role='Wizard', myName='Wizard', roomCode='', camStream=null, screenStream=null;
+let audioOn=true, videoOn=true, screenSharing=false, dualOn=false, fsPipOn=false;
+let fsUiVisible=true, fsChatOpen=false;
+let hideTimer=null;
+let friends=[], roomMembers=[];
+const chatMessages=[];
 
-// --- Role Selection Logic ---
-const btnWizard = document.getElementById('btn-wizard');
-const btnWitch = document.getElementById('btn-witch');
-
-btnWizard.onclick = () => {
-  role = 'Wizard';
-  btnWizard.classList.add('active');
-  btnWitch.classList.remove('active');
-};
-
-btnWitch.onclick = () => {
-  role = 'Witch';
-  btnWitch.classList.add('active');
-  btnWizard.classList.remove('active');
-};
-
-// --- Room Generation Logic ---
-document.getElementById('gen-room-btn').onclick = () => {
-  const code = Math.random().toString(36).substring(2, 8).toUpperCase();
-  document.getElementById('room-code-input').value = code;
-};
-
-// --- Apparate (Entry) Logic ---
-document.getElementById('apparate-btn').onclick = async () => {
-  const nameInput = document.getElementById('user-name').value.trim();
-  const roomInput = document.getElementById('room-code-input').value.trim();
-
-  if (!nameInput) {
-    alert("Reveal your name, traveler!");
-    return;
-  }
-  
-  myName = nameInput;
-  roomCode = roomInput || "HOGWARTS";
-  
-  document.getElementById('local-label').innerText = `${role} ${myName}`;
-  document.getElementById('landing').style.display = 'none';
-  document.getElementById('dashboard').classList.add('active');
-  
-  try {
-    camStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-    document.getElementById('local-video').srcObject = camStream;
-  } catch (err) {
-    alert("Camera failed. Ministry of Magic requires visual identification!");
-  }
-};
-
-// --- Artifacts System ---
-const ARTIFACTS = [
-  { name: "Sorting Hat", url: "https://i.ibb.co/60pL5fV/sorting-hat.png", size: 220 },
-  { name: "Harry's Glasses", url: "https://i.ibb.co/9H8vSyg/glasses.png", size: 120 },
-  { name: "Golden Snitch", url: "https://i.ibb.co/pXQv6mG/snitch.png", size: 80 },
-  { name: "Gryffindor Scarf", url: "https://i.ibb.co/yYy8S8P/scarf.png", size: 260 },
-  { name: "Luna's Spectres", url: "https://i.ibb.co/mC3xYp1/luna.png", size: 140 },
-  { name: "Elder Wand", url: "https://i.ibb.co/mS7xYp1/wand.png", size: 180 }
+/* ── Artifacts / Props ── */
+const PROPS=[
+  {label:"Harry's Glasses",   emoji:"🕶️", url:"https://img.icons8.com/color/480/glasses.png",             size:130},
+  {label:"Lightning Scar",    emoji:"⚡", url:"https://img.icons8.com/emoji/480/lightning.png",            size:90},
+  {label:"Sorting Hat",       emoji:"🎩", url:"https://img.icons8.com/color/480/sorting-hat.png",          size:160},
+  {label:"Elder Wand",        emoji:"🪄", url:"https://img.icons8.com/emoji/480/magic-wand-emoji.png",     size:140},
+  {label:"Dumbledore's Beard",emoji:"🧔", url:"https://img.icons8.com/color/480/santa-claus.png",          size:170},
+  {label:"Witch Hat",         emoji:"🧙", url:"https://img.icons8.com/color/480/witch-hat.png",            size:150},
+  {label:"Owl Post",          emoji:"🦉", url:"https://img.icons8.com/color/480/owl--v1.png",              size:130},
+  {label:"Golden Snitch",     emoji:"✨", url:"https://img.icons8.com/color/480/star-of-david.png",        size:80, gold:true},
+  {label:"Invisibility Cloak",emoji:"🌀", url:"https://img.icons8.com/color/480/cloak.png",                size:180},
+  {label:"Marauder's Map",    emoji:"🗺️", url:"https://img.icons8.com/color/480/treasure-map.png",         size:160},
+  {label:"Hogwarts Crest",    emoji:"🛡️", url:"https://img.icons8.com/color/480/coat-of-arms.png",         size:140},
+  {label:"Butterbeer Mug",    emoji:"🍺", url:"https://img.icons8.com/color/480/beer-mug.png",              size:110},
 ];
 
-const artList = document.getElementById('art-list');
-ARTIFACTS.forEach(art => {
-  const btn = document.createElement('button');
-  btn.className = "w-full text-left p-3 hover:bg-white/10 rounded-xl cinzel text-[10px] text-white uppercase transition";
-  btn.innerText = art.name;
-  btn.onclick = () => {
-    summonArtifact(art.url, art.size);
-    document.getElementById('art-menu').classList.remove('open');
-  };
+const artList=document.getElementById('art-list');
+PROPS.forEach(p=>{
+  const btn=document.createElement('button');
+  btn.className='w-full text-[10px] uppercase tracking-widest px-3 py-2.5 hover:bg-white/5 rounded-xl transition text-left flex items-center gap-2.5 cinzel'+(p.gold?' text-amber-500':'');
+  btn.innerHTML=`<span class="text-lg leading-none">${p.emoji}</span><span>${p.label}</span>`;
+  btn.addEventListener('click',()=>{ summon(p.url,p.size); toggleArtMenu(); });
   artList.appendChild(btn);
 });
 
-function summonArtifact(url, size) {
-  const container = document.getElementById('local-box');
-  const el = document.createElement('div');
-  el.className = 'artifact';
-  el.style.width = size + "px";
-  el.style.left = "30%";
-  el.style.top = "20%";
-  
-  const img = document.createElement('img');
-  img.src = url;
-  
-  el.appendChild(img);
-  container.appendChild(el);
-  makeDraggable(el);
-  
-  // Double click to remove
-  el.ondblclick = () => el.remove();
-}
+/* ── Role selection ── */
+document.getElementById('btn-wizard').addEventListener('click',()=>{
+  role='Wizard';
+  document.getElementById('btn-wizard').classList.add('active');
+  document.getElementById('btn-witch').classList.remove('active');
+});
+document.getElementById('btn-witch').addEventListener('click',()=>{
+  role='Witch';
+  document.getElementById('btn-witch').classList.add('active');
+  document.getElementById('btn-wizard').classList.remove('active');
+});
+document.getElementById('btn-wizard').classList.add('active');
 
-document.getElementById('art-btn').onclick = (e) => {
-  e.stopPropagation();
-  document.getElementById('art-menu').classList.toggle('open');
-};
-
-document.getElementById('clear-art-btn').onclick = () => {
-  document.querySelectorAll('.artifact').forEach(a => a.remove());
-};
-
-// Close menu on click outside
-document.addEventListener('click', () => {
-  document.getElementById('art-menu').classList.remove('open');
+/* ── Room code gen ── */
+function genCode(){ return Math.random().toString(36).substr(2,6).toUpperCase(); }
+document.getElementById('gen-room-btn').addEventListener('click',()=>{
+  document.getElementById('room-code-input').value=genCode();
 });
 
-// --- Draggable Logic (Full) ---
-function makeDraggable(el) {
-  let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-  
-  el.onmousedown = dragStart;
-  el.ontouchstart = dragStart;
+/* ── Apparate ── */
+document.getElementById('apparate-btn').addEventListener('click',()=>{
+  const n=document.getElementById('user-name').value.trim();
+  const rc=document.getElementById('room-code-input').value.trim()||genCode();
+  if(!n){ alert("Identify yourself, traveler."); return; }
+  myName=role+' '+n;
+  roomCode=rc.toUpperCase();
+  document.getElementById('local-label').innerText=myName;
+  document.getElementById('room-label').innerText='Room: '+roomCode;
+  document.getElementById('fs-room-label').innerText=roomCode;
+  document.getElementById('room-code-display').innerText=roomCode;
+  roomMembers=[myName];
+  renderRoomMembers();
+  document.getElementById('landing').style.display='none';
+  document.getElementById('dashboard').classList.add('active');
+  initCamera();
+  postSystemMsg('You entered Room '+roomCode);
+});
 
-  function dragStart(e) {
-    const event = e.type === 'touchstart' ? e.touches[0] : e;
-    pos3 = event.clientX;
-    pos4 = event.clientY;
-    document.onmouseup = dragEnd;
-    document.ontouchend = dragEnd;
-    document.onmousemove = dragMove;
-    document.ontouchmove = dragMove;
-  }
-
-  function dragMove(e) {
-    const event = e.type === 'touchmove' ? e.touches[0] : e;
-    pos1 = pos3 - event.clientX;
-    pos2 = pos4 - event.clientY;
-    pos3 = event.clientX;
-    pos4 = event.clientY;
-    el.style.top = (el.offsetTop - pos2) + "px";
-    el.style.left = (el.offsetLeft - pos1) + "px";
-  }
-
-  function dragEnd() {
-    document.onmouseup = null;
-    document.onmousemove = null;
-    document.ontouchend = null;
-    document.ontouchmove = null;
-  }
+/* ── Camera ── */
+async function initCamera(){
+  try{
+    camStream=await navigator.mediaDevices.getUserMedia({video:true,audio:true});
+    document.getElementById('local-video').srcObject=camStream;
+    document.getElementById('remote-video').srcObject=camStream;
+  }catch(e){ alert('Ministry Alert: Camera access required.'); }
 }
 
-document.getElementById('leave-btn').onclick = () => location.reload();
+/* ── Mic / Cam ── */
+function updateMicIcon(){
+  const ic=audioOn?'mic':'mic-off';
+  ['mic-btn','fs-mic-btn'].forEach(id=>{
+    const b=document.getElementById(id); if(!b)return;
+    b.innerHTML=`<i data-lucide="${ic}" size="20"></i>`;
+    b.style.color=audioOn?'':'#ef4444';
+  });
+  lucide.createIcons();
+}
+function updateCamIcon(){
+  const ic=videoOn?'video':'video-off';
+  ['cam-btn','fs-cam-btn'].forEach(id=>{
+    const b=document.getElementById(id); if(!b)return;
+    b.innerHTML=`<i data-lucide="${ic}" size="20"></i>`;
+    b.style.color=videoOn?'':'#ef4444';
+  });
+  lucide.createIcons();
+}
+function toggleMic(){
+  if(!camStream)return;
+  audioOn=!audioOn;
+  camStream.getAudioTracks().forEach(t=>t.enabled=audioOn);
+  updateMicIcon();
+}
+function toggleCam(){
+  if(!camStream)return;
+  videoOn=!videoOn;
+  camStream.getVideoTracks().forEach(t=>t.enabled=videoOn);
+  updateCamIcon();
+}
+document.getElementById('mic-btn').addEventListener('click',toggleMic);
+document.getElementById('cam-btn').addEventListener('click',toggleCam);
+document.getElementById('fs-mic-btn').addEventListener('click',toggleMic);
+document.getElementById('fs-cam-btn').addEventListener('click',toggleCam);
+
+/* ── Screen Share ── */
+document.getElementById('screen-btn').addEventListener('click',async()=>{
+  if(screenSharing){ stopScreen(); return; }
+  try{
+    screenStream=await navigator.mediaDevices.getDisplayMedia({video:true});
+    screenSharing=true;
+    document.getElementById('local-video').srcObject=screenStream;
+    document.getElementById('screen-btn').style.color='#d4b46a';
+    document.getElementById('dual-btn').classList.remove('hidden');
+    screenStream.getVideoTracks()[0].addEventListener('ended',stopScreen);
+    showCornerPip();
+  }catch(e){}
+});
+function stopScreen(){
+  if(screenStream) screenStream.getTracks().forEach(t=>t.stop());
+  screenStream=null; screenSharing=false; dualOn=false;
+  document.getElementById('local-video').srcObject=camStream;
+  document.getElementById('screen-btn').style.color='';
+  document.getElementById('dual-btn').classList.add('hidden');
+  document.getElementById('corner-pip').style.display='none';
+}
+document.getElementById('dual-btn').addEventListener('click',()=>{
+  dualOn=!dualOn;
+  dualOn?showCornerPip():document.getElementById('corner-pip').style.display='none';
+});
+function showCornerPip(){
+  dualOn=true;
+  const cp=document.getElementById('corner-pip');
+  const cv=document.getElementById('corner-vid');
+  cv.srcObject=camStream; cv.play().catch(()=>{});
+  cp.style.display='block';
+  makeDraggable(cp);
+  makeResizable(cp,'corner-resize');
+}
+
+/* ── Artifacts ── */
+function toggleArtMenu(){
+  document.getElementById('art-menu').classList.toggle('open');
+}
+document.getElementById('art-btn').addEventListener('click',e=>{ e.stopPropagation(); toggleArtMenu(); });
+document.addEventListener('click',e=>{
+  if(!document.getElementById('art-wrap').contains(e.target))
+    document.getElementById('art-menu').classList.remove('open');
+});
+document.getElementById('clear-art-btn').addEventListener('click',()=>document.querySelectorAll('.artifact').forEach(a=>a.remove()));
+
+function summon(url,size){
+  const box=document.getElementById('local-box');
+  const el=document.createElement('div');
+  el.className='artifact';
+  el.style.cssText=`width:${size}px;top:50px;left:50px;`;
+  const img=document.createElement('img');
+  img.src=url;
+  img.onerror=()=>{ img.src='https://img.icons8.com/emoji/480/magic-wand-emoji.png'; };
+  el.appendChild(img);
+  el.addEventListener('dblclick',()=>el.remove());
+  makeDraggable(el);
+  el.addEventListener('wheel',e=>{
+    e.preventDefault();
+    let w=parseInt(el.style.width)||100;
+    w=e.deltaY<0?w+10:w-10;
+    el.style.width=Math.max(40,w)+'px';
+  },{passive:false});
+  box.appendChild(el);
+}
+
+/* ── Draggable ── */
+function makeDraggable(el){
+  let ox,oy,st,sl,active=false;
+  function start(e){
+    if(e.target.classList.contains('pip-resize'))return;
+    e.preventDefault();
+    const ev=e.touches?e.touches[0]:e;
+    ox=ev.clientX; oy=ev.clientY; st=el.offsetTop; sl=el.offsetLeft; active=true;
+    document.addEventListener('mousemove',move);
+    document.addEventListener('mouseup',end);
+    document.addEventListener('touchmove',move,{passive:false});
+    document.addEventListener('touchend',end);
+  }
+  function move(e){
+    if(!active)return;
+    e.preventDefault();
+    const ev=e.touches?e.touches[0]:e;
+    el.style.top=(st+ev.clientY-oy)+'px';
+    el.style.left=(sl+ev.clientX-ox)+'px';
+  }
+  function end(){ active=false;
+    document.removeEventListener('mousemove',move);
+    document.removeEventListener('mouseup',end);
+    document.removeEventListener('touchmove',move);
+    document.removeEventListener('touchend',end);
+  }
+  el.addEventListener('mousedown',start);
+  el.addEventListener('touchstart',start,{passive:false});
+}
+function makeResizable(el,handleId){
+  const h=document.getElementById(handleId); if(!h)return;
+  let sx,sy,sw,sh;
+  function start(e){ e.preventDefault(); e.stopPropagation();
+    const ev=e.touches?e.touches[0]:e;
+    sx=ev.clientX; sy=ev.clientY; sw=el.offsetWidth; sh=el.offsetHeight;
+    document.addEventListener('mousemove',move); document.addEventListener('mouseup',end);
+    document.addEventListener('touchmove',move,{passive:false}); document.addEventListener('touchend',end);
+  }
+  function move(e){ e.preventDefault();
+    const ev=e.touches?e.touches[0]:e;
+    el.style.width=Math.max(80,sw+(ev.clientX-sx))+'px';
+    el.style.height=Math.max(60,sh+(ev.clientY-sy))+'px';
+  }
+  function end(){ document.removeEventListener('mousemove',move); document.removeEventListener('mouseup',end);
+    document.removeEventListener('touchmove',move); document.removeEventListener('touchend',end); }
+  h.addEventListener('mousedown',start); h.addEventListener('touchstart',start,{passive:false});
+}
+
+/* ── Fullscreen ── */
+document.getElementById('open-fs-btn').addEventListener('click',openFS);
+document.getElementById('fs-exit-btn').addEventListener('click',closeFS);
+
+function openFS(){
+  document.getElementById('fs-remote-video').srcObject=document.getElementById('remote-video').srcObject;
+  document.getElementById('fs-page').classList.add('active');
+  syncFsChat();
+  setupFsUiToggle();
+  // pip
+  if(fsPipOn) showFsPip();
+}
+function closeFS(){
+  document.getElementById('fs-page').classList.remove('active');
+  clearTimeout(hideTimer);
+  showFsUI();
+}
+
+/* FS UI hide/show on hover/tap */
+function setupFsUiToggle(){
+  const wrap=document.getElementById('fs-video-wrap');
+  // PC: hide after idle
+  wrap.addEventListener('mousemove',onFsActivity);
+  wrap.addEventListener('click',onFsActivity);
+  // Mobile: tap toggles
+  wrap.addEventListener('touchstart',()=>{
+    if(!fsChatOpen){ toggleFsUI(); }
+  },{passive:true});
+  showFsUI();
+}
+function onFsActivity(){
+  showFsUI();
+  clearTimeout(hideTimer);
+  hideTimer=setTimeout(hideFsUI, 3000);
+}
+function showFsUI(){ fsUiVisible=true; document.getElementById('fs-ui').classList.remove('hidden-ui'); }
+function hideFsUI(){ fsUiVisible=false; document.getElementById('fs-ui').classList.add('hidden-ui'); }
+function toggleFsUI(){ fsUiVisible?hideFsUI():showFsUI(); }
+
+/* FS chat side panel */
+document.getElementById('fs-chat-toggle').addEventListener('click',()=>{
+  fsChatOpen=!fsChatOpen;
+  document.getElementById('fs-chat-side').classList.toggle('open',fsChatOpen);
+  if(fsChatOpen){ syncFsChat(); clearTimeout(hideTimer); showFsUI(); }
+});
+document.getElementById('fs-chat-close').addEventListener('click',()=>{
+  fsChatOpen=false;
+  document.getElementById('fs-chat-side').classList.remove('open');
+});
+
+/* FS PiP self-view */
+document.getElementById('fs-pip-btn').addEventListener('click',()=>{
+  fsPipOn=!fsPipOn;
+  fsPipOn?showFsPip():hideFsPip();
+});
+function showFsPip(){
+  const pip=document.getElementById('fs-pip');
+  document.getElementById('fs-pip-video').srcObject=camStream;
+  pip.style.display='block';
+  makeDraggable(pip);
+  makeResizable(pip,'fs-pip-resize');
+}
+function hideFsPip(){ document.getElementById('fs-pip').style.display='none'; }
+
+/* ── Chat ── */
+function postMsg(name,text,isSystem){
+  const m={name,text,system:!!isSystem};
+  chatMessages.push(m);
+  appendMsg(document.getElementById('chat-stream'),m);
+  if(document.getElementById('fs-chat-side').classList.contains('open'))
+    appendMsg(document.getElementById('fs-chat-stream'),m);
+  // clear placeholder
+  const ph=document.querySelector('#chat-stream p');
+  if(ph) ph.remove();
+}
+function postSystemMsg(text){ postMsg('',text,true); }
+function appendMsg(container,m){
+  const ph=container.querySelector('p[data-ph]')||container.querySelector('p');
+  if(ph&&ph.dataset.ph!==undefined) ph.remove();
+  const d=document.createElement('div');
+  d.className='chat-msg'+(m.system?' system':'');
+  if(m.system){ d.textContent=m.text; }
+  else{ d.innerHTML=`<div class="chat-sender">${m.name}</div><div class="text-zinc-300">${m.text}</div>`; }
+  container.appendChild(d);
+  container.scrollTop=container.scrollHeight;
+}
+function syncFsChat(){
+  const fs=document.getElementById('fs-chat-stream');
+  fs.innerHTML='';
+  chatMessages.forEach(m=>appendMsg(fs,m));
+}
+function doSend(inputId, streamId){
+  const inp=document.getElementById(inputId);
+  const txt=inp.value.trim(); if(!txt)return;
+  postMsg(myName,txt);
+  inp.value='';
+  // also update other stream
+  syncFsChat();
+}
+document.getElementById('send-btn').addEventListener('click',()=>doSend('chat-input','chat-stream'));
+document.getElementById('chat-input').addEventListener('keydown',e=>{ if(e.key==='Enter') doSend('chat-input','chat-stream'); });
+document.getElementById('fs-send-btn').addEventListener('click',()=>doSend('fs-chat-input','fs-chat-stream'));
+document.getElementById('fs-chat-input').addEventListener('keydown',e=>{ if(e.key==='Enter') doSend('fs-chat-input','fs-chat-stream'); });
+
+/* ── Tabs ── */
+document.querySelectorAll('.stab').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.stab').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    ['chat','friends','room'].forEach(t=>{
+      document.getElementById('tab-content-'+t).classList.toggle('hidden',t!==btn.dataset.tab);
+    });
+  });
+});
+
+/* ── Friends ── */
+document.getElementById('add-friend-btn').addEventListener('click',addFriend);
+document.getElementById('friend-input').addEventListener('keydown',e=>{ if(e.key==='Enter') addFriend(); });
+function addFriend(){
+  const inp=document.getElementById('friend-input');
+  const name=inp.value.trim(); if(!name)return;
+  if(friends.find(f=>f.name.toLowerCase()===name.toLowerCase())){ inp.value=''; return; }
+  friends.push({name,online:Math.random()>.4});
+  inp.value='';
+  renderFriends();
+  postSystemMsg(name+' added to companions.');
+}
+function renderFriends(){
+  const list=document.getElementById('friend-list');
+  list.innerHTML='';
+  if(!friends.length){
+    list.innerHTML='<p class="text-center italic text-zinc-700 text-xs uppercase tracking-[.15em] mt-8 cinzel" data-ph>No companions yet...</p>';
+    return;
+  }
+  friends.forEach((f,i)=>{
+    const d=document.createElement('div');
+    d.className='friend-item';
+    d.innerHTML=`
+      <div class="${f.online?'online-dot':'offline-dot'}"></div>
+      <div class="flex-1 min-w-0">
+        <div class="text-xs text-zinc-300 truncate cinzel">${f.name}</div>
+        <div class="text-[9px] text-zinc-600">${f.online?'In the castle':'Away from Hogwarts'}</div>
+      </div>
+      <button data-i="${i}" class="rm-friend p-1 text-zinc-700 hover:text-red-500 transition"><i data-lucide="x" size="12"></i></button>
+    `;
+    d.querySelector('.rm-friend').addEventListener('click',e=>{ e.stopPropagation(); friends.splice(i,1); renderFriends(); });
+    list.appendChild(d);
+  });
+  lucide.createIcons();
+}
+
+/* ── Room tab ── */
+document.getElementById('copy-room-btn').addEventListener('click',()=>{
+  navigator.clipboard.writeText(roomCode).then(()=>{ postSystemMsg('Room code copied to clipboard!'); }).catch(()=>{});
+});
+document.getElementById('invite-btn').addEventListener('click',()=>{
+  const inp=document.getElementById('invite-input');
+  const name=inp.value.trim(); if(!name)return;
+  if(!roomMembers.includes(name)){
+    roomMembers.push(name);
+    if(!friends.find(f=>f.name===name)) friends.push({name,online:true});
+    renderFriends();
+    renderRoomMembers();
+    postSystemMsg(name+' was invited to Room '+roomCode);
+  }
+  inp.value='';
+});
+document.getElementById('new-room-btn').addEventListener('click',()=>{
+  roomCode=genCode();
+  document.getElementById('room-code-display').innerText=roomCode;
+  document.getElementById('room-label').innerText='Room: '+roomCode;
+  document.getElementById('fs-room-label').innerText=roomCode;
+  postSystemMsg('New room created: '+roomCode);
+});
+function renderRoomMembers(){
+  const el=document.getElementById('room-members');
+  el.innerHTML='';
+  roomMembers.forEach(m=>{
+    const d=document.createElement('div');
+    d.className='flex items-center gap-2';
+    d.innerHTML=`<div class="online-dot"></div><span class="cinzel text-zinc-400">${m}</span>`;
+    el.appendChild(d);
+  });
+}
+
+/* ── Leave ── */
+document.getElementById('leave-btn').addEventListener('click',()=>{
+  if(confirm('Mischief Managed?')){
+    if(camStream) camStream.getTracks().forEach(t=>t.stop());
+    if(screenStream) screenStream.getTracks().forEach(t=>t.stop());
+    location.reload();
+  }
+});
+
+makeResizable(document.getElementById('fs-pip'),'fs-pip-resize');
 </script>
 </body>
 </html>
