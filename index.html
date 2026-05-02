@@ -9,44 +9,48 @@
     <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@300;400;600&family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root { --deep-obsidian: #08070b; --muted-gold: #a3854b; }
-        body { font-family: 'Crimson Pro', serif; background-color: var(--deep-obsidian); color: #d1d5db; overflow: hidden; height: 100vh; font-size: 1.15rem; }
+        body { font-family: 'Crimson Pro', serif; background-color: var(--deep-obsidian); color: #d1d5db; height: 100vh; font-size: 1.15rem; overflow: hidden; }
         h1, h2, h3, .heading-font { font-family: 'Cinzel', serif; letter-spacing: 0.15em; font-weight: 600; }
-        
-        .glass-panel { background: rgba(15, 15, 20, 0.85); backdrop-filter: blur(40px); border: 1px solid rgba(163, 133, 75, 0.12); }
-        .translucent-bar { background: rgba(10, 10, 15, 0.5); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.08); }
-        
-        /* Station Sign Logo */
+
+        .glass-panel { background: rgba(15,15,20,0.85); backdrop-filter: blur(40px); border: 1px solid rgba(163,133,75,0.12); }
+        .translucent-bar { background: rgba(10,10,15,0.5); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.08); }
+
         .station-sign { width: 110px; height: 110px; border: 3px solid #fef3c7; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #000; box-shadow: 0 0 30px rgba(0,0,0,0.8); }
 
-        /* Draggable Artifacts */
-        .artifact { position: absolute; cursor: grab; user-select: none; z-index: 50; touch-action: none; transition: transform 0.1s; }
+        .artifact { position: absolute; cursor: grab; user-select: none; z-index: 50; touch-action: none; }
         .artifact:active { cursor: grabbing; outline: 1px dashed var(--muted-gold); }
-        .artifact img { width: 100%; height: 100%; pointer-events: none; }
+        .artifact img { width: 100%; height: 100%; pointer-events: none; display: block; }
 
         .video-box { position: relative; width: 100%; height: 100%; border-radius: 2.5rem; overflow: hidden; background: #000; border: 1px solid rgba(255,255,255,0.05); }
         video { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
 
         #companion-focus-box:fullscreen { background: black; display: flex; align-items: center; justify-content: center; }
         #companion-focus-box:fullscreen video { width: 100vw; height: 100vh; border-radius: 0; }
-        
+
         .immersive-active .hide-on-immersive { opacity: 0; pointer-events: none; }
-        .role-btn.active { border-color: var(--muted-gold); color: white; background: rgba(163, 133, 75, 0.15); box-shadow: 0 0 15px rgba(163, 133, 75, 0.2); }
-        
+
+        .role-btn.active { border-color: var(--muted-gold); color: white; background: rgba(163,133,75,0.15); box-shadow: 0 0 15px rgba(163,133,75,0.2); }
+
         .enchantment-scroll::-webkit-scrollbar { width: 5px; }
         .enchantment-scroll::-webkit-scrollbar-thumb { background: var(--muted-gold); border-radius: 10px; }
 
-        .split-divider { width: 1px; height: 65%; background: linear-gradient(to bottom, transparent, rgba(163, 133, 75, 0.3), transparent); }
+        .split-divider { width: 1px; height: 65%; background: linear-gradient(to bottom, transparent, rgba(163,133,75,0.3), transparent); }
+
+        .chat-msg { text-align: left; padding: 8px 12px; border-radius: 16px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); font-size: 0.8rem; line-height: 1.5; }
+        .chat-msg .sender { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--muted-gold); margin-bottom: 2px; font-family: 'Cinzel', serif; }
+
+        #portal-interface { display: none; }
+        #portal-interface.active { display: flex; }
     </style>
 </head>
 <body>
 
-    <!-- HOME PAGE (STATION LAYOUT) -->
+    <!-- HOME PAGE -->
     <div id="landing-page" class="h-full flex flex-col md:flex-row items-center justify-center p-8 relative overflow-hidden">
         <div class="absolute w-[800px] h-[800px] bg-purple-900/5 blur-[160px] rounded-full -z-10"></div>
 
-        <!-- Left Column: New Branding -->
         <div class="flex-1 flex flex-col items-center md:items-end md:pr-16 text-center md:text-right mb-12 md:mb-0">
-            <div class="station-sign mb-8 shadow-amber-500/10">
+            <div class="station-sign mb-8">
                 <span class="text-4xl font-bold text-white leading-none">9</span>
                 <div class="w-12 h-[2px] bg-white my-1"></div>
                 <span class="text-xl font-bold text-white leading-none uppercase">¾</span>
@@ -58,35 +62,27 @@
 
         <div class="hidden md:block split-divider"></div>
 
-        <!-- Right Column: Enhanced Form -->
         <div class="flex-1 flex flex-col items-center md:items-start md:pl-16 w-full">
             <div class="glass-panel p-10 rounded-[3rem] w-full max-w-md shadow-2xl">
                 <h2 class="heading-font text-lg mb-8 text-amber-100/80">Platform Entry</h2>
-                
                 <div class="space-y-6">
-                    <!-- Role Selection -->
                     <div>
                         <p class="text-[10px] uppercase tracking-widest text-zinc-500 mb-3 ml-1">Identity Selection</p>
                         <div class="flex gap-3">
-                            <button id="btn-wizard" onclick="setRole('Wizard')" class="role-btn flex-1 py-4 border border-white/5 rounded-2xl text-[11px] uppercase tracking-widest active transition font-bold">Wizard</button>
-                            <button id="btn-witch" onclick="setRole('Witch')" class="role-btn flex-1 py-4 border border-white/5 rounded-2xl text-[11px] uppercase tracking-widest transition font-bold">Witch</button>
+                            <button id="btn-wizard" class="role-btn flex-1 py-4 border border-white/5 rounded-2xl text-[11px] uppercase tracking-widest transition font-bold">Wizard</button>
+                            <button id="btn-witch" class="role-btn flex-1 py-4 border border-white/5 rounded-2xl text-[11px] uppercase tracking-widest transition font-bold">Witch</button>
                         </div>
                     </div>
-
-                    <!-- Name Selection -->
                     <div>
                         <p class="text-[10px] uppercase tracking-widest text-zinc-500 mb-3 ml-1">Wizarding Name</p>
-                        <input type="text" id="user-name" placeholder="e.g. Albus" 
+                        <input type="text" id="user-name" placeholder="e.g. Albus"
                                class="w-full bg-black/40 border border-amber-900/20 rounded-2xl px-6 py-4 focus:outline-none focus:border-amber-700/50 transition-all text-amber-100 italic text-base placeholder:text-zinc-800">
                     </div>
-
-                    <!-- Travel Key -->
                     <div>
                         <p class="text-[10px] uppercase tracking-widest text-zinc-500 mb-3 ml-1">Travel Key</p>
-                        <input type="text" id="platform-key" placeholder="The Marauder's Code..." 
+                        <input type="text" id="platform-key" placeholder="The Marauder's Code..."
                                class="w-full bg-black/40 border border-amber-900/20 rounded-2xl px-6 py-4 focus:outline-none focus:border-amber-700/50 transition-all text-amber-100 italic text-base placeholder:text-zinc-800">
                     </div>
-                    
                     <button onclick="apparate()" class="w-full bg-zinc-100 text-black font-bold py-5 rounded-2xl hover:bg-white transition active:scale-95 text-xs uppercase tracking-[0.2em] shadow-xl mt-4">
                         Apparate
                     </button>
@@ -95,13 +91,14 @@
         </div>
     </div>
 
-    <!-- DASHBOARD INTERFACE -->
-    <div id="portal-interface" class="hidden h-screen flex flex-col md:flex-row p-6 gap-6">
+    <!-- DASHBOARD -->
+    <div id="portal-interface" class="h-screen flex-col md:flex-row p-6 gap-6">
         <div class="flex-1 relative flex flex-col gap-6">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 h-full">
+
                 <!-- Self View -->
-                <div id="local-video-container" class="video-box glass-panel">
-                    <video id="local-video" class="scale-x-[-1]" autoplay muted></video>
+                <div id="local-video-container" class="video-box glass-panel" style="position:relative;">
+                    <video id="local-video" class="scale-x-[-1]" autoplay muted playsinline></video>
                     <div class="absolute bottom-8 left-8 flex items-center gap-2 bg-black/60 px-4 py-2 rounded-xl text-xs uppercase tracking-widest text-amber-200 border border-white/5 font-bold shadow-lg">
                         <span id="display-full-name">Wizard Traveler</span>
                     </div>
@@ -109,33 +106,32 @@
 
                 <!-- Companion Area -->
                 <div id="companion-focus-box" class="video-box glass-panel group">
-                    <video id="remote-video" autoplay></video>
+                    <video id="remote-video" autoplay playsinline></video>
                     <div class="absolute bottom-8 left-8 hide-on-immersive flex items-center gap-2 bg-black/60 px-4 py-2 rounded-xl text-xs uppercase tracking-widest text-zinc-400 border border-white/5">
                         Companion Focus
                     </div>
                     <button onclick="enterFocus()" class="absolute top-8 right-8 p-4 glass-panel hover:bg-white/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-all hide-on-immersive text-amber-100/50 shadow-xl">
                         <i data-lucide="expand" size="24"></i>
                     </button>
-
-                    <!-- Fullscreen Overlay Controls -->
-                    <div id="focus-bar" class="hidden absolute bottom-12 left-1/2 -translate-x-1/2 translucent-bar px-10 py-5 rounded-[2.5rem] flex items-center gap-10 hide-on-immersive shadow-2xl">
-                        <button onclick="toggleAudio()"><i data-lucide="mic" size="26"></i></button>
-                        <button onclick="toggleVideo()"><i data-lucide="video" size="26"></i></button>
+                    <div id="focus-bar" class="hidden absolute bottom-12 left-1/2 -translate-x-1/2 translucent-bar px-10 py-5 rounded-[2.5rem] flex items-center gap-10 shadow-2xl">
+                        <button onclick="toggleAudio()" id="fs-mic-btn"><i data-lucide="mic" size="26"></i></button>
+                        <button onclick="toggleVideo()" id="fs-cam-btn"><i data-lucide="video" size="26"></i></button>
                         <button onclick="exitFocus()" class="text-red-400"><i data-lucide="shrink" size="26"></i></button>
                     </div>
                     <button id="immersive-toggle" onclick="toggleImmersive()" class="hidden absolute top-8 left-1/2 -translate-x-1/2 translucent-bar px-6 py-2 rounded-full text-[10px] uppercase tracking-widest text-zinc-500 hover:text-white transition">Toggle Controls</button>
                 </div>
             </div>
 
-            <!-- DASHBOARD NAV -->
-            <div id="bottom-nav" class="glass-panel w-fit mx-auto px-12 py-6 rounded-[2.5rem] flex items-center gap-12 shadow-2xl border-t border-white/10">
-                <button class="text-zinc-500 hover:text-white transition"><i data-lucide="mic" size="24"></i></button>
-                <button class="text-zinc-500 hover:text-white transition"><i data-lucide="video" size="24"></i></button>
+            <!-- BOTTOM NAV -->
+            <div id="bottom-nav" class="glass-panel w-fit mx-auto px-12 py-6 rounded-[2.5rem] flex items-center gap-12 shadow-2xl border-t border-white/10" style="position:relative; z-index:100;">
+                <button id="mic-btn" onclick="toggleAudio()" class="text-zinc-500 hover:text-white transition"><i data-lucide="mic" size="24"></i></button>
+                <button id="cam-btn" onclick="toggleVideo()" class="text-zinc-500 hover:text-white transition"><i data-lucide="video" size="24"></i></button>
                 <button class="text-zinc-500 hover:text-amber-500 transition"><i data-lucide="map" size="24"></i></button>
-                
-                <div class="relative group">
-                    <button class="text-zinc-500 hover:text-amber-400 transition"><i data-lucide="sparkles" size="24"></i></button>
-                    <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-6 hidden group-hover:flex flex-col glass-panel p-3 rounded-[2rem] w-60 gap-1 border border-white/10 shadow-2xl">
+
+                <!-- Artifacts Menu -->
+                <div class="relative" id="artifacts-menu-wrapper">
+                    <button onclick="toggleArtifactsMenu()" class="text-zinc-500 hover:text-amber-400 transition"><i data-lucide="sparkles" size="24"></i></button>
+                    <div id="artifacts-dropdown" class="hidden absolute bottom-full left-1/2 -translate-x-1/2 mb-6 flex-col glass-panel p-3 rounded-[2rem] w-60 gap-1 border border-white/10 shadow-2xl" style="z-index:200;">
                         <div class="text-[10px] uppercase tracking-widest text-zinc-600 px-4 py-2">Select Artifact</div>
                         <div class="max-h-72 overflow-y-auto enchantment-scroll pr-1">
                             <button onclick="summon('https://img.icons8.com/color/480/sorting-hat.png', 160)" class="w-full text-xs uppercase tracking-widest p-4 hover:bg-white/5 rounded-2xl transition text-left">Sorting Hat</button>
@@ -149,7 +145,7 @@
                 </div>
 
                 <div class="w-[1px] h-8 bg-white/10"></div>
-                <button onclick="mischiefManaged()" class="bg-red-950/20 text-red-500 p-4 rounded-2xl hover:bg-red-500 transition"><i data-lucide="log-out" size="24"></i></button>
+                <button onclick="mischiefManaged()" class="bg-red-950/20 text-red-500 p-4 rounded-2xl hover:bg-red-500 hover:text-white transition"><i data-lucide="log-out" size="24"></i></button>
             </div>
         </div>
 
@@ -160,11 +156,14 @@
                     <span class="heading-font text-xs text-amber-100/30 uppercase tracking-widest">Owl Post</span>
                     <i data-lucide="feather" size="20" class="text-zinc-700"></i>
                 </div>
-                <div id="chat-stream" class="flex-1 p-6 text-center italic text-zinc-700 text-xs uppercase tracking-[0.2em] mt-32">Awaiting owls...</div>
+                <div id="chat-stream" class="flex-1 p-6 overflow-y-auto enchantment-scroll flex flex-col gap-3">
+                    <p class="text-center italic text-zinc-700 text-xs uppercase tracking-[0.2em] mt-16">Awaiting owls...</p>
+                </div>
                 <div class="p-5">
                     <div class="relative">
-                        <input type="text" placeholder="Write message..." class="w-full bg-black/20 border border-white/5 rounded-2xl py-4 px-5 focus:outline-none focus:border-amber-900/30 text-sm italic">
-                        <button class="absolute right-3 top-1/2 -translate-y-1/2 p-2 text-amber-900 hover:text-amber-600"><i data-lucide="send-horizonal" size="20"></i></button>
+                        <input type="text" id="chat-input" placeholder="Write message..." onkeydown="if(event.key==='Enter') sendMessage()"
+                               class="w-full bg-black/20 border border-white/5 rounded-2xl py-4 px-5 focus:outline-none focus:border-amber-900/30 text-sm italic">
+                        <button onclick="sendMessage()" class="absolute right-3 top-1/2 -translate-y-1/2 p-2 text-amber-900 hover:text-amber-600"><i data-lucide="send-horizontal" size="20"></i></button>
                     </div>
                 </div>
             </div>
@@ -173,90 +172,179 @@
 
     <script>
         lucide.createIcons();
+
         const companionBox = document.getElementById('companion-focus-box');
         const localContainer = document.getElementById('local-video-container');
         let selectedRole = 'Wizard';
+        let audioEnabled = true, videoEnabled = true;
+        let currentStream = null;
 
         function setRole(role) {
             selectedRole = role;
-            document.querySelectorAll('.role-btn').forEach(btn => btn.classList.remove('active'));
-            document.getElementById(`btn-${role.toLowerCase()}`).classList.add('active');
+            document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('btn-' + role.toLowerCase()).classList.add('active');
         }
 
         function apparate() {
             const userName = document.getElementById('user-name').value.trim();
             const platformKey = document.getElementById('platform-key').value.trim();
-
-            if(!userName || !platformKey) {
-                return alert("Identify yourself and enter the Marauder's Code.");
+            if (!userName || !platformKey) {
+                alert("Identify yourself and enter the Marauder's Code.");
+                return;
             }
-            
-            // Set name tag: Wizard Albus / Witch Hermione
             document.getElementById('display-full-name').innerText = `${selectedRole} ${userName}`;
-            
             document.getElementById('landing-page').style.display = 'none';
-            document.getElementById('portal-interface').style.display = 'flex';
+            const portal = document.getElementById('portal-interface');
+            portal.classList.add('active');
             initCamera();
         }
 
         async function initCamera() {
             try {
-                const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-                document.getElementById('local-video').srcObject = stream;
-                document.getElementById('remote-video').srcObject = stream; // Mock peer
-            } catch (e) { alert("Ministry Alert: Camera access required."); }
+                currentStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                document.getElementById('local-video').srcObject = currentStream;
+                document.getElementById('remote-video').srcObject = currentStream;
+            } catch (e) {
+                alert("Ministry Alert: Camera access required.");
+            }
+        }
+
+        function toggleAudio() {
+            if (!currentStream) return;
+            audioEnabled = !audioEnabled;
+            currentStream.getAudioTracks().forEach(t => t.enabled = audioEnabled);
+            const icon = audioEnabled ? 'mic' : 'mic-off';
+            const color = audioEnabled ? 'text-zinc-500' : 'text-red-500';
+            ['mic-btn', 'fs-mic-btn'].forEach(id => {
+                const btn = document.getElementById(id);
+                if (btn) {
+                    btn.innerHTML = `<i data-lucide="${icon}" size="24"></i>`;
+                    btn.className = btn.className.replace(/text-(zinc-500|red-500)/g, '') + ' ' + color;
+                }
+            });
+            lucide.createIcons();
+        }
+
+        function toggleVideo() {
+            if (!currentStream) return;
+            videoEnabled = !videoEnabled;
+            currentStream.getVideoTracks().forEach(t => t.enabled = videoEnabled);
+            const icon = videoEnabled ? 'video' : 'video-off';
+            const color = videoEnabled ? 'text-zinc-500' : 'text-red-500';
+            ['cam-btn', 'fs-cam-btn'].forEach(id => {
+                const btn = document.getElementById(id);
+                if (btn) {
+                    btn.innerHTML = `<i data-lucide="${icon}" size="24"></i>`;
+                    btn.className = btn.className.replace(/text-(zinc-500|red-500)/g, '') + ' ' + color;
+                }
+            });
+            lucide.createIcons();
         }
 
         function summon(url, size) {
             const artifact = document.createElement('div');
             artifact.className = 'artifact';
             artifact.style.width = size + 'px';
-            artifact.style.top = '100px';
-            artifact.style.left = '100px';
+            artifact.style.top = '80px';
+            artifact.style.left = '80px';
             const img = document.createElement('img');
             img.src = url;
             artifact.appendChild(img);
             artifact.ondblclick = () => artifact.remove();
-            
             makeMovable(artifact);
             makeResizable(artifact);
             localContainer.appendChild(artifact);
+            toggleArtifactsMenu();
         }
 
         function makeMovable(el) {
-            let p1 = 0, p2 = 0, p3 = 0, p4 = 0;
-            el.onmousedown = dmd; el.ontouchstart = dmd;
-            function dmd(e) {
-                const ev = e.type === 'touchstart' ? e.touches[0] : e;
-                p3 = ev.clientX; p4 = ev.clientY;
-                document.onmouseup = dr; document.onmousemove = ed;
-                document.ontouchend = dr; document.ontouchmove = ed;
+            let ox, oy, startTop, startLeft;
+            function start(e) {
+                e.preventDefault();
+                const ev = e.touches ? e.touches[0] : e;
+                ox = ev.clientX; oy = ev.clientY;
+                startTop = el.offsetTop; startLeft = el.offsetLeft;
+                document.addEventListener('mousemove', move);
+                document.addEventListener('mouseup', stop);
+                document.addEventListener('touchmove', move, { passive: false });
+                document.addEventListener('touchend', stop);
             }
-            function ed(e) {
-                const ev = e.type === 'touchmove' ? e.touches[0] : e;
-                p1 = p3 - ev.clientX; p2 = p4 - ev.clientY;
-                p3 = ev.clientX; p4 = ev.clientY;
-                el.style.top = (el.offsetTop - p2) + "px"; el.style.left = (el.offsetLeft - p1) + "px";
+            function move(e) {
+                e.preventDefault();
+                const ev = e.touches ? e.touches[0] : e;
+                el.style.top = (startTop + ev.clientY - oy) + 'px';
+                el.style.left = (startLeft + ev.clientX - ox) + 'px';
             }
-            function dr() { document.onmouseup = null; document.onmousemove = null; document.ontouchend = null; document.ontouchmove = null; }
+            function stop() {
+                document.removeEventListener('mousemove', move);
+                document.removeEventListener('mouseup', stop);
+                document.removeEventListener('touchmove', move);
+                document.removeEventListener('touchend', stop);
+            }
+            el.addEventListener('mousedown', start);
+            el.addEventListener('touchstart', start, { passive: false });
         }
 
         function makeResizable(el) {
-            el.onwheel = (e) => {
+            el.addEventListener('wheel', (e) => {
                 e.preventDefault();
-                let w = parseInt(el.style.width);
-                if (e.deltaY < 0) w += 10; else w -= 10;
+                let w = parseInt(el.style.width) || 100;
+                w = e.deltaY < 0 ? w + 10 : w - 10;
                 el.style.width = Math.max(40, w) + 'px';
-            };
+            });
         }
 
-        function clearArtifacts() { document.querySelectorAll('.artifact').forEach(a => a.remove()); }
+        function clearArtifacts() {
+            document.querySelectorAll('.artifact').forEach(a => a.remove());
+        }
+
+        function toggleArtifactsMenu() {
+            const dd = document.getElementById('artifacts-dropdown');
+            dd.classList.toggle('hidden');
+            dd.classList.toggle('flex');
+        }
+
+        // Close artifacts dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            const wrapper = document.getElementById('artifacts-menu-wrapper');
+            if (wrapper && !wrapper.contains(e.target)) {
+                const dd = document.getElementById('artifacts-dropdown');
+                if (!dd.classList.contains('hidden')) {
+                    dd.classList.add('hidden');
+                    dd.classList.remove('flex');
+                }
+            }
+        });
+
+        function sendMessage() {
+            const inp = document.getElementById('chat-input');
+            const msg = inp.value.trim();
+            if (!msg) return;
+            const stream = document.getElementById('chat-stream');
+            // Remove placeholder if present
+            const placeholder = stream.querySelector('p');
+            if (placeholder) placeholder.remove();
+
+            const name = document.getElementById('display-full-name').innerText || 'You';
+            const div = document.createElement('div');
+            div.className = 'chat-msg';
+            div.innerHTML = `<div class="sender">${name}</div><div class="text-zinc-300">${msg}</div>`;
+            stream.appendChild(div);
+            stream.scrollTop = stream.scrollHeight;
+            inp.value = '';
+        }
 
         function enterFocus() { if (companionBox.requestFullscreen) companionBox.requestFullscreen(); }
         function exitFocus() { if (document.fullscreenElement) document.exitFullscreen(); }
         function toggleImmersive() { companionBox.classList.toggle('immersive-active'); }
-        function mischiefManaged() { if(confirm("Mischief Managed?")) location.reload(); }
-        
+
+        function mischiefManaged() {
+            if (confirm("Mischief Managed?")) {
+                if (currentStream) currentStream.getTracks().forEach(t => t.stop());
+                location.reload();
+            }
+        }
+
         document.addEventListener('fullscreenchange', () => {
             const isFS = !!document.fullscreenElement;
             document.getElementById('focus-bar').classList.toggle('hidden', !isFS);
@@ -266,6 +354,9 @@
         });
 
         setRole('Wizard');
+
+        document.getElementById('btn-wizard').addEventListener('click', () => setRole('Wizard'));
+        document.getElementById('btn-witch').addEventListener('click', () => setRole('Witch'));
     </script>
 </body>
 </html>
