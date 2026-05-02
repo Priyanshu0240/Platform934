@@ -1,365 +1,625 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>9 ¾ | Way to Hogwarts</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@300;400;600&family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root { --deep-obsidian: #08070b; --muted-gold: #a3854b; }
-        body { font-family: 'Crimson Pro', serif; background-color: var(--deep-obsidian); color: #d1d5db; height: 100vh; font-size: 1.15rem; overflow: hidden; }
-        h1, h2, h3, .heading-font { font-family: 'Cinzel', serif; letter-spacing: 0.15em; font-weight: 600; }
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>9 ¾ | Way to Hogwarts</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@300;400;600&family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{--gold:#a3854b;--obsidian:#08070b;}
+*{box-sizing:border-box;}
+body{font-family:'Crimson Pro',serif;background:var(--obsidian);color:#d1d5db;height:100vh;overflow:hidden;font-size:1.1rem;}
+.heading-font,.cinzel{font-family:'Cinzel',serif;letter-spacing:.15em;}
+.glass{background:rgba(15,15,20,.88);backdrop-filter:blur(40px);border:1px solid rgba(163,133,75,.13);}
+.tbar{background:rgba(10,10,18,.6);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.09);}
+.split{width:1px;height:65%;background:linear-gradient(to bottom,transparent,rgba(163,133,75,.3),transparent);}
+.station-sign{width:110px;height:110px;border:3px solid #fef3c7;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#000;}
+.role-btn{transition:all .2s;}
+.role-btn.active{border-color:var(--gold)!important;color:#fff;background:rgba(163,133,75,.15);box-shadow:0 0 15px rgba(163,133,75,.2);}
+.vbox{position:relative;border-radius:2rem;overflow:hidden;background:#000;border:1px solid rgba(255,255,255,.06);}
+video{width:100%;height:100%;object-fit:cover;pointer-events:none;}
+.artifact{position:absolute;cursor:grab;user-select:none;z-index:60;touch-action:none;}
+.artifact:active{cursor:grabbing;}
+.artifact img{width:100%;height:auto;pointer-events:none;display:block;filter:drop-shadow(0 4px 16px rgba(0,0,0,.7));}
+.scroll-gold::-webkit-scrollbar{width:4px;}
+.scroll-gold::-webkit-scrollbar-thumb{background:var(--gold);border-radius:10px;}
+.chat-msg{padding:8px 12px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);font-size:.8rem;}
+.chat-sender{font-size:.6rem;text-transform:uppercase;letter-spacing:.15em;color:var(--gold);margin-bottom:2px;font-family:'Cinzel',serif;}
+#portal{display:none;}
+#portal.active{display:flex;}
 
-        .glass-panel { background: rgba(15,15,20,0.85); backdrop-filter: blur(40px); border: 1px solid rgba(163,133,75,0.12); }
-        .translucent-bar { background: rgba(10,10,15,0.5); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.08); }
+/* Fullscreen overlay */
+#fs-overlay{position:fixed;inset:0;z-index:1000;background:#000;display:none;flex-direction:column;}
+#fs-overlay.active{display:flex;}
+#fs-video-wrap{flex:1;position:relative;overflow:hidden;}
+#fs-main-video{width:100%;height:100%;object-fit:cover;}
 
-        .station-sign { width: 110px; height: 110px; border: 3px solid #fef3c7; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #000; box-shadow: 0 0 30px rgba(0,0,0,0.8); }
+/* Floating PiP window */
+#pip-win{position:absolute;z-index:80;border-radius:1rem;overflow:hidden;background:#000;border:2px solid rgba(163,133,75,.3);box-shadow:0 8px 32px rgba(0,0,0,.7);cursor:move;display:none;min-width:80px;min-height:60px;}
+#pip-win video{width:100%;height:100%;object-fit:cover;display:block;}
+#pip-resize{position:absolute;bottom:0;right:0;width:16px;height:16px;cursor:se-resize;background:linear-gradient(135deg,transparent 50%,rgba(163,133,75,.6) 50%);z-index:81;}
 
-        .artifact { position: absolute; cursor: grab; user-select: none; z-index: 50; touch-action: none; }
-        .artifact:active { cursor: grabbing; outline: 1px dashed var(--muted-gold); }
-        .artifact img { width: 100%; height: 100%; pointer-events: none; display: block; }
+/* Corner PiP (screen share + camera) */
+#corner-pip{position:absolute;z-index:70;border-radius:1rem;overflow:hidden;background:#000;border:2px solid rgba(163,133,75,.25);box-shadow:0 4px 20px rgba(0,0,0,.6);cursor:move;display:none;min-width:80px;min-height:60px;}
+#corner-pip video{width:100%;height:100%;object-fit:cover;display:block;}
+#corner-resize{position:absolute;bottom:0;right:0;width:16px;height:16px;cursor:se-resize;background:linear-gradient(135deg,transparent 50%,rgba(163,133,75,.5) 50%);z-index:71;}
 
-        .video-box { position: relative; width: 100%; height: 100%; border-radius: 2.5rem; overflow: hidden; background: #000; border: 1px solid rgba(255,255,255,0.05); }
-        video { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+/* FS controls bar */
+#fs-controls{position:absolute;bottom:0;left:0;right:0;padding:20px;display:flex;flex-direction:column;align-items:center;gap:12px;transition:opacity .3s;z-index:90;}
+#fs-controls.hidden-ctrl{opacity:0;pointer-events:none;}
+#fs-ctrl-bar{display:flex;align-items:center;gap:16px;background:rgba(10,10,18,.65);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.1);padding:12px 28px;border-radius:2rem;}
+#fs-chat-panel{width:min(360px,92vw);background:rgba(10,10,18,.75);backdrop-filter:blur(20px);border:1px solid rgba(163,133,75,.12);border-radius:1.5rem;overflow:hidden;display:none;flex-direction:column;max-height:40vh;}
+#fs-chat-stream{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px;}
 
-        #companion-focus-box:fullscreen { background: black; display: flex; align-items: center; justify-content: center; }
-        #companion-focus-box:fullscreen video { width: 100vw; height: 100vh; border-radius: 0; }
+/* artifact menu */
+#art-menu{display:none;position:absolute;bottom:calc(100% + 12px);left:50%;transform:translateX(-50%);width:230px;z-index:300;}
+#art-menu.open{display:flex;flex-direction:column;}
 
-        .immersive-active .hide-on-immersive { opacity: 0; pointer-events: none; }
+/* Toggle controls hint */
+#fs-hint{position:absolute;top:16px;right:16px;z-index:91;opacity:.5;}
 
-        .role-btn.active { border-color: var(--muted-gold); color: white; background: rgba(163,133,75,0.15); box-shadow: 0 0 15px rgba(163,133,75,0.2); }
-
-        .enchantment-scroll::-webkit-scrollbar { width: 5px; }
-        .enchantment-scroll::-webkit-scrollbar-thumb { background: var(--muted-gold); border-radius: 10px; }
-
-        .split-divider { width: 1px; height: 65%; background: linear-gradient(to bottom, transparent, rgba(163,133,75,0.3), transparent); }
-
-        .chat-msg { text-align: left; padding: 8px 12px; border-radius: 16px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); font-size: 0.8rem; line-height: 1.5; }
-        .chat-msg .sender { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--muted-gold); margin-bottom: 2px; font-family: 'Cinzel', serif; }
-
-        #portal-interface { display: none; }
-        #portal-interface.active { display: flex; }
-    </style>
+@media(max-width:768px){
+  #portal.active{flex-direction:column;}
+  #sidebar{width:100%!important;max-height:220px;}
+  #fs-ctrl-bar{gap:10px;padding:10px 16px;}
+}
+</style>
 </head>
 <body>
 
-    <!-- HOME PAGE -->
-    <div id="landing-page" class="h-full flex flex-col md:flex-row items-center justify-center p-8 relative overflow-hidden">
-        <div class="absolute w-[800px] h-[800px] bg-purple-900/5 blur-[160px] rounded-full -z-10"></div>
-
-        <div class="flex-1 flex flex-col items-center md:items-end md:pr-16 text-center md:text-right mb-12 md:mb-0">
-            <div class="station-sign mb-8">
-                <span class="text-4xl font-bold text-white leading-none">9</span>
-                <div class="w-12 h-[2px] bg-white my-1"></div>
-                <span class="text-xl font-bold text-white leading-none uppercase">¾</span>
-            </div>
-            <h1 class="text-3xl md:text-5xl font-bold text-white mb-2 uppercase">Way to Hogwarts</h1>
-            <h2 class="text-xl md:text-2xl font-light text-amber-600 mb-4 italic">The Wizarding School</h2>
-            <p class="text-zinc-500 font-medium uppercase tracking-[0.3em] text-[12px]">(No Muggles Allowed)</p>
+<!-- LANDING -->
+<div id="landing" class="h-full flex flex-col md:flex-row items-center justify-center p-6 relative overflow-hidden">
+  <div class="absolute w-[700px] h-[700px] bg-purple-900/5 blur-[160px] rounded-full -z-10 pointer-events-none"></div>
+  <div class="flex-1 flex flex-col items-center md:items-end md:pr-16 text-center md:text-right mb-10 md:mb-0">
+    <div class="station-sign mb-8">
+      <span class="text-4xl font-bold text-white leading-none">9</span>
+      <div class="w-10 h-[2px] bg-white my-1"></div>
+      <span class="text-xl font-bold text-white leading-none uppercase">¾</span>
+    </div>
+    <h1 class="cinzel text-3xl md:text-5xl font-bold text-white mb-2 uppercase">Way to Hogwarts</h1>
+    <h2 class="cinzel text-xl md:text-2xl font-light text-amber-600 mb-4 italic">The Wizarding School</h2>
+    <p class="text-zinc-500 uppercase tracking-[.3em] text-[11px]">(No Muggles Allowed)</p>
+  </div>
+  <div class="hidden md:block split"></div>
+  <div class="flex-1 flex flex-col items-center md:items-start md:pl-16 w-full">
+    <div class="glass p-10 rounded-[3rem] w-full max-w-md shadow-2xl">
+      <h2 class="cinzel text-lg mb-8 text-amber-100/80">Platform Entry</h2>
+      <div class="space-y-6">
+        <div>
+          <p class="text-[10px] uppercase tracking-widest text-zinc-500 mb-3 ml-1">Identity Selection</p>
+          <div class="flex gap-3">
+            <button id="btn-wizard" class="role-btn flex-1 py-4 border border-white/5 rounded-2xl text-[11px] uppercase tracking-widest font-bold">Wizard</button>
+            <button id="btn-witch" class="role-btn flex-1 py-4 border border-white/5 rounded-2xl text-[11px] uppercase tracking-widest font-bold">Witch</button>
+          </div>
         </div>
-
-        <div class="hidden md:block split-divider"></div>
-
-        <div class="flex-1 flex flex-col items-center md:items-start md:pl-16 w-full">
-            <div class="glass-panel p-10 rounded-[3rem] w-full max-w-md shadow-2xl">
-                <h2 class="heading-font text-lg mb-8 text-amber-100/80">Platform Entry</h2>
-                <div class="space-y-6">
-                    <div>
-                        <p class="text-[10px] uppercase tracking-widest text-zinc-500 mb-3 ml-1">Identity Selection</p>
-                        <div class="flex gap-3">
-                            <button id="btn-wizard" class="role-btn flex-1 py-4 border border-white/5 rounded-2xl text-[11px] uppercase tracking-widest transition font-bold">Wizard</button>
-                            <button id="btn-witch" class="role-btn flex-1 py-4 border border-white/5 rounded-2xl text-[11px] uppercase tracking-widest transition font-bold">Witch</button>
-                        </div>
-                    </div>
-                    <div>
-                        <p class="text-[10px] uppercase tracking-widest text-zinc-500 mb-3 ml-1">Wizarding Name</p>
-                        <input type="text" id="user-name" placeholder="e.g. Albus"
-                               class="w-full bg-black/40 border border-amber-900/20 rounded-2xl px-6 py-4 focus:outline-none focus:border-amber-700/50 transition-all text-amber-100 italic text-base placeholder:text-zinc-800">
-                    </div>
-                    <div>
-                        <p class="text-[10px] uppercase tracking-widest text-zinc-500 mb-3 ml-1">Travel Key</p>
-                        <input type="text" id="platform-key" placeholder="The Marauder's Code..."
-                               class="w-full bg-black/40 border border-amber-900/20 rounded-2xl px-6 py-4 focus:outline-none focus:border-amber-700/50 transition-all text-amber-100 italic text-base placeholder:text-zinc-800">
-                    </div>
-                    <button onclick="apparate()" class="w-full bg-zinc-100 text-black font-bold py-5 rounded-2xl hover:bg-white transition active:scale-95 text-xs uppercase tracking-[0.2em] shadow-xl mt-4">
-                        Apparate
-                    </button>
-                </div>
-            </div>
+        <div>
+          <p class="text-[10px] uppercase tracking-widest text-zinc-500 mb-3 ml-1">Wizarding Name</p>
+          <input id="user-name" type="text" placeholder="e.g. Albus" class="w-full bg-black/40 border border-amber-900/20 rounded-2xl px-6 py-4 focus:outline-none focus:border-amber-700/50 text-amber-100 italic text-base placeholder:text-zinc-800"/>
         </div>
+        <div>
+          <p class="text-[10px] uppercase tracking-widest text-zinc-500 mb-3 ml-1">Travel Key</p>
+          <input id="platform-key" type="text" placeholder="The Marauder's Code..." class="w-full bg-black/40 border border-amber-900/20 rounded-2xl px-6 py-4 focus:outline-none focus:border-amber-700/50 text-amber-100 italic text-base placeholder:text-zinc-800"/>
+        </div>
+        <button id="apparate-btn" class="w-full bg-zinc-100 text-black font-bold py-5 rounded-2xl hover:bg-white transition active:scale-95 text-xs uppercase tracking-[.2em] shadow-xl mt-4">Apparate</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="portal" class="h-screen flex-col md:flex-row p-4 gap-4">
+  <div class="flex-1 flex flex-col gap-4 min-w-0">
+    <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4" style="min-height:0;">
+
+      <!-- Self view -->
+      <div id="local-box" class="vbox" style="position:relative;min-height:180px;">
+        <video id="local-video" autoplay muted playsinline class="scale-x-[-1]"></video>
+        <div class="absolute bottom-4 left-4 bg-black/60 px-3 py-1.5 rounded-xl text-xs uppercase tracking-widest text-amber-200 border border-white/5 font-bold cinzel">
+          <span id="display-name">Wizard Traveler</span>
+        </div>
+        <!-- corner PiP lives here when screen sharing -->
+        <div id="corner-pip">
+          <video id="corner-video"></video>
+          <div id="corner-resize"></div>
+        </div>
+      </div>
+
+      <!-- Companion view -->
+      <div id="companion-box" class="vbox group" style="position:relative;min-height:180px;">
+        <video id="remote-video" autoplay playsinline></video>
+        <div class="absolute bottom-4 left-4 bg-black/60 px-3 py-1.5 rounded-xl text-xs uppercase tracking-widest text-zinc-400 border border-white/5 cinzel">Companion Focus</div>
+        <button id="open-fs-btn" class="absolute top-4 right-4 p-3 glass hover:bg-white/5 rounded-xl opacity-0 group-hover:opacity-100 transition text-amber-100/60">
+          <i data-lucide="expand" size="20"></i>
+        </button>
+        <!-- PiP floating window lives here -->
+        <div id="pip-win">
+          <video id="pip-video" autoplay playsinline muted class="scale-x-[-1]"></video>
+          <div id="pip-resize"></div>
+        </div>
+      </div>
     </div>
 
-    <!-- DASHBOARD -->
-    <div id="portal-interface" class="h-screen flex-col md:flex-row p-6 gap-6">
-        <div class="flex-1 relative flex flex-col gap-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 h-full">
+    <!-- BOTTOM NAV -->
+    <div id="bottom-nav" class="glass w-fit mx-auto px-8 py-4 rounded-[2rem] flex items-center gap-8 shadow-2xl border-t border-white/10 flex-wrap justify-center" style="position:relative;z-index:200;">
+      <button id="mic-btn" class="text-zinc-500 hover:text-white transition p-1"><i data-lucide="mic" size="22"></i></button>
+      <button id="cam-btn" class="text-zinc-500 hover:text-white transition p-1"><i data-lucide="video" size="22"></i></button>
 
-                <!-- Self View -->
-                <div id="local-video-container" class="video-box glass-panel" style="position:relative;">
-                    <video id="local-video" class="scale-x-[-1]" autoplay muted playsinline></video>
-                    <div class="absolute bottom-8 left-8 flex items-center gap-2 bg-black/60 px-4 py-2 rounded-xl text-xs uppercase tracking-widest text-amber-200 border border-white/5 font-bold shadow-lg">
-                        <span id="display-full-name">Wizard Traveler</span>
-                    </div>
-                </div>
-
-                <!-- Companion Area -->
-                <div id="companion-focus-box" class="video-box glass-panel group">
-                    <video id="remote-video" autoplay playsinline></video>
-                    <div class="absolute bottom-8 left-8 hide-on-immersive flex items-center gap-2 bg-black/60 px-4 py-2 rounded-xl text-xs uppercase tracking-widest text-zinc-400 border border-white/5">
-                        Companion Focus
-                    </div>
-                    <button onclick="enterFocus()" class="absolute top-8 right-8 p-4 glass-panel hover:bg-white/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-all hide-on-immersive text-amber-100/50 shadow-xl">
-                        <i data-lucide="expand" size="24"></i>
-                    </button>
-                    <div id="focus-bar" class="hidden absolute bottom-12 left-1/2 -translate-x-1/2 translucent-bar px-10 py-5 rounded-[2.5rem] flex items-center gap-10 shadow-2xl">
-                        <button onclick="toggleAudio()" id="fs-mic-btn"><i data-lucide="mic" size="26"></i></button>
-                        <button onclick="toggleVideo()" id="fs-cam-btn"><i data-lucide="video" size="26"></i></button>
-                        <button onclick="exitFocus()" class="text-red-400"><i data-lucide="shrink" size="26"></i></button>
-                    </div>
-                    <button id="immersive-toggle" onclick="toggleImmersive()" class="hidden absolute top-8 left-1/2 -translate-x-1/2 translucent-bar px-6 py-2 rounded-full text-[10px] uppercase tracking-widest text-zinc-500 hover:text-white transition">Toggle Controls</button>
-                </div>
-            </div>
-
-            <!-- BOTTOM NAV -->
-            <div id="bottom-nav" class="glass-panel w-fit mx-auto px-12 py-6 rounded-[2.5rem] flex items-center gap-12 shadow-2xl border-t border-white/10" style="position:relative; z-index:100;">
-                <button id="mic-btn" onclick="toggleAudio()" class="text-zinc-500 hover:text-white transition"><i data-lucide="mic" size="24"></i></button>
-                <button id="cam-btn" onclick="toggleVideo()" class="text-zinc-500 hover:text-white transition"><i data-lucide="video" size="24"></i></button>
-                <button class="text-zinc-500 hover:text-amber-500 transition"><i data-lucide="map" size="24"></i></button>
-
-                <!-- Artifacts Menu -->
-                <div class="relative" id="artifacts-menu-wrapper">
-                    <button onclick="toggleArtifactsMenu()" class="text-zinc-500 hover:text-amber-400 transition"><i data-lucide="sparkles" size="24"></i></button>
-                    <div id="artifacts-dropdown" class="hidden absolute bottom-full left-1/2 -translate-x-1/2 mb-6 flex-col glass-panel p-3 rounded-[2rem] w-60 gap-1 border border-white/10 shadow-2xl" style="z-index:200;">
-                        <div class="text-[10px] uppercase tracking-widest text-zinc-600 px-4 py-2">Select Artifact</div>
-                        <div class="max-h-72 overflow-y-auto enchantment-scroll pr-1">
-                            <button onclick="summon('https://img.icons8.com/color/480/sorting-hat.png', 160)" class="w-full text-xs uppercase tracking-widest p-4 hover:bg-white/5 rounded-2xl transition text-left flex items-center gap-3"><img src="https://img.icons8.com/color/480/sorting-hat.png" class="w-8 h-8 rounded"/>Sorting Hat</button>
-                            <button onclick="summon('https://img.icons8.com/color/480/round-glasses.png', 130)" class="w-full text-xs uppercase tracking-widest p-4 hover:bg-white/5 rounded-2xl transition text-left flex items-center gap-3"><img src="https://img.icons8.com/color/480/round-glasses.png" class="w-8 h-8 rounded"/>Potter's Specs</button>
-                            <button onclick="summon('https://img.icons8.com/emoji/480/magic-wand-emoji.png', 160)" class="w-full text-xs uppercase tracking-widest p-4 hover:bg-white/5 rounded-2xl transition text-left flex items-center gap-3"><img src="https://img.icons8.com/emoji/480/magic-wand-emoji.png" class="w-8 h-8 rounded"/>Magic Wand</button>
-                            <button onclick="summon('https://img.icons8.com/color/480/witch-hat.png', 150)" class="w-full text-xs uppercase tracking-widest p-4 hover:bg-white/5 rounded-2xl transition text-left flex items-center gap-3"><img src="https://img.icons8.com/color/480/witch-hat.png" class="w-8 h-8 rounded"/>Witch Hat</button>
-                            <button onclick="summon('https://img.icons8.com/color/480/owl.png', 140)" class="w-full text-xs uppercase tracking-widest p-4 hover:bg-white/5 rounded-2xl transition text-left flex items-center gap-3"><img src="https://img.icons8.com/color/480/owl.png" class="w-8 h-8 rounded"/>Hedwig the Owl</button>
-                            <button onclick="summon('https://img.icons8.com/color/480/lightning-bolt.png', 90)" class="w-full text-xs uppercase tracking-widest p-4 hover:bg-white/5 rounded-2xl transition text-left flex items-center gap-3"><img src="https://img.icons8.com/color/480/lightning-bolt.png" class="w-8 h-8 rounded"/>Lightning Bolt</button>
-                            <button onclick="summon('https://img.icons8.com/emoji/480/sneezing-face.png', 120)" class="w-full text-xs uppercase tracking-widest p-4 hover:bg-white/5 rounded-2xl transition text-left flex items-center gap-3"><img src="https://img.icons8.com/emoji/480/sneezing-face.png" class="w-8 h-8 rounded"/>Nargles Mask</button>
-                            <button onclick="summon('https://img.icons8.com/color/480/star--v1.png', 80)" class="w-full text-xs uppercase tracking-widest p-4 hover:bg-white/5 rounded-2xl transition text-left flex items-center gap-3 text-amber-500"><img src="https://img.icons8.com/color/480/star--v1.png" class="w-8 h-8 rounded"/>Golden Snitch ✦</button>
-                        </div>
-                        <button onclick="clearArtifacts()" class="text-xs uppercase tracking-widest p-4 hover:bg-red-900/20 rounded-2xl transition text-red-500 mt-2 border-t border-white/5">Finite Incantatem</button>
-                    </div>
-                </div>
-
-                <div class="w-[1px] h-8 bg-white/10"></div>
-                <button onclick="mischiefManaged()" class="bg-red-950/20 text-red-500 p-4 rounded-2xl hover:bg-red-500 hover:text-white transition"><i data-lucide="log-out" size="24"></i></button>
-            </div>
+      <!-- Artifacts -->
+      <div style="position:relative;" id="art-wrap">
+        <button id="art-toggle-btn" class="text-zinc-500 hover:text-amber-400 transition p-1"><i data-lucide="sparkles" size="22"></i></button>
+        <div id="art-menu" class="glass border border-white/10 shadow-2xl rounded-[1.5rem] p-3 w-56">
+          <div class="text-[9px] uppercase tracking-widest text-zinc-600 px-3 py-2 cinzel">Summon Artifact</div>
+          <div class="max-h-64 overflow-y-auto scroll-gold flex flex-col gap-0.5" id="art-list"></div>
+          <button id="clear-art-btn" class="w-full text-xs uppercase tracking-widest p-3 hover:bg-red-900/20 rounded-xl text-red-500 mt-1 border-t border-white/5">Finite Incantatem</button>
         </div>
+      </div>
 
-        <!-- SIDEBAR -->
-        <div id="sidebar" class="w-full md:w-80 flex flex-col gap-6">
-            <div class="flex-1 glass-panel rounded-[3rem] flex flex-col overflow-hidden">
-                <div class="p-6 border-b border-white/5 flex items-center justify-between">
-                    <span class="heading-font text-xs text-amber-100/30 uppercase tracking-widest">Owl Post</span>
-                    <i data-lucide="feather" size="20" class="text-zinc-700"></i>
-                </div>
-                <div id="chat-stream" class="flex-1 p-6 overflow-y-auto enchantment-scroll flex flex-col gap-3">
-                    <p class="text-center italic text-zinc-700 text-xs uppercase tracking-[0.2em] mt-16">Awaiting owls...</p>
-                </div>
-                <div class="p-5">
-                    <div class="relative">
-                        <input type="text" id="chat-input" placeholder="Write message..." onkeydown="if(event.key==='Enter') sendMessage()"
-                               class="w-full bg-black/20 border border-white/5 rounded-2xl py-4 px-5 focus:outline-none focus:border-amber-900/30 text-sm italic">
-                        <button onclick="sendMessage()" class="absolute right-3 top-1/2 -translate-y-1/2 p-2 text-amber-900 hover:text-amber-600"><i data-lucide="send-horizontal" size="20"></i></button>
-                    </div>
-                </div>
-            </div>
+      <!-- Screen share -->
+      <button id="screen-btn" class="text-zinc-500 hover:text-amber-400 transition p-1" title="Share Screen"><i data-lucide="monitor" size="22"></i></button>
+      <!-- Screen + Camera PiP toggle -->
+      <button id="dual-btn" class="text-zinc-500 hover:text-amber-400 transition p-1 hidden" title="Toggle Camera corner PiP"><i data-lucide="picture-in-picture-2" size="22"></i></button>
+
+      <div class="w-px h-6 bg-white/10"></div>
+      <button id="leave-btn" class="bg-red-950/20 text-red-500 p-3 rounded-xl hover:bg-red-500 hover:text-white transition"><i data-lucide="log-out" size="20"></i></button>
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div id="sidebar" class="w-full md:w-72 flex flex-col gap-4">
+    <div class="flex-1 glass rounded-[2.5rem] flex flex-col overflow-hidden">
+      <div class="p-5 border-b border-white/5 flex items-center justify-between">
+        <span class="cinzel text-xs text-amber-100/30 uppercase tracking-widest">Owl Post</span>
+        <i data-lucide="feather" size="18" class="text-zinc-700"></i>
+      </div>
+      <div id="chat-stream" class="flex-1 p-4 overflow-y-auto scroll-gold flex flex-col gap-2">
+        <p id="chat-placeholder" class="text-center italic text-zinc-700 text-xs uppercase tracking-[.2em] mt-12">Awaiting owls...</p>
+      </div>
+      <div class="p-4">
+        <div style="position:relative;">
+          <input id="chat-input" type="text" placeholder="Write message..." class="w-full bg-black/20 border border-white/5 rounded-2xl py-3 px-4 focus:outline-none focus:border-amber-900/30 text-sm italic pr-12"/>
+          <button id="send-btn" class="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 text-amber-900 hover:text-amber-500"><i data-lucide="send-horizontal" size="18"></i></button>
         </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FULLSCREEN OVERLAY -->
+<div id="fs-overlay">
+  <div id="fs-video-wrap">
+    <video id="fs-main-video" autoplay playsinline></video>
+
+    <!-- PiP inside fullscreen -->
+    <div id="pip-win">
+      <!-- reused via JS -->
     </div>
 
-    <script>
-        lucide.createIcons();
+    <!-- hint -->
+    <button id="fs-hint" class="tbar px-4 py-2 rounded-full text-[10px] uppercase tracking-widest cinzel text-zinc-400 hover:text-white transition">
+      <i data-lucide="eye" size="14" class="inline mr-1"></i>Toggle UI
+    </button>
 
-        const companionBox = document.getElementById('companion-focus-box');
-        const localContainer = document.getElementById('local-video-container');
-        let selectedRole = 'Wizard';
-        let audioEnabled = true, videoEnabled = true;
-        let currentStream = null;
+    <!-- controls -->
+    <div id="fs-controls">
+      <!-- chat panel -->
+      <div id="fs-chat-panel" class="scroll-gold">
+        <div id="fs-chat-stream" class="scroll-gold flex flex-col gap-2"></div>
+        <div class="p-3 border-t border-white/5" style="position:relative;">
+          <input id="fs-chat-input" type="text" placeholder="Write message..." class="w-full bg-black/30 border border-white/5 rounded-2xl py-3 px-4 focus:outline-none text-sm italic pr-12 text-zinc-200"/>
+          <button id="fs-send-btn" class="absolute right-5 top-1/2 -translate-y-1/2 p-1 text-amber-700 hover:text-amber-400"><i data-lucide="send-horizontal" size="16"></i></button>
+        </div>
+      </div>
 
-        function setRole(role) {
-            selectedRole = role;
-            document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById('btn-' + role.toLowerCase()).classList.add('active');
-        }
+      <div id="fs-ctrl-bar">
+        <button id="fs-mic-btn" class="text-zinc-300 hover:text-white transition p-1"><i data-lucide="mic" size="22"></i></button>
+        <button id="fs-cam-btn" class="text-zinc-300 hover:text-white transition p-1"><i data-lucide="video" size="22"></i></button>
+        <div class="w-px h-5 bg-white/20"></div>
+        <button id="fs-chat-toggle" class="text-zinc-300 hover:text-amber-400 transition p-1" title="Toggle Chat"><i data-lucide="message-circle" size="22"></i></button>
+        <button id="fs-pip-toggle" class="text-zinc-300 hover:text-amber-400 transition p-1" title="Toggle Floating Self View"><i data-lucide="picture-in-picture" size="22"></i></button>
+        <div class="w-px h-5 bg-white/20"></div>
+        <button id="fs-exit-btn" class="text-red-400 hover:text-red-300 transition p-1"><i data-lucide="shrink" size="22"></i></button>
+      </div>
+    </div>
+  </div>
+</div>
 
-        function apparate() {
-            const userName = document.getElementById('user-name').value.trim();
-            const platformKey = document.getElementById('platform-key').value.trim();
-            if (!userName || !platformKey) {
-                alert("Identify yourself and enter the Marauder's Code.");
-                return;
-            }
-            document.getElementById('display-full-name').innerText = `${selectedRole} ${userName}`;
-            document.getElementById('landing-page').style.display = 'none';
-            const portal = document.getElementById('portal-interface');
-            portal.classList.add('active');
-            initCamera();
-        }
+<script>
+lucide.createIcons();
 
-        async function initCamera() {
-            try {
-                currentStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-                document.getElementById('local-video').srcObject = currentStream;
-                document.getElementById('remote-video').srcObject = currentStream;
-            } catch (e) {
-                alert("Ministry Alert: Camera access required.");
-            }
-        }
+/* ── State ── */
+let role='Wizard', myName='Wizard Traveler';
+let camStream=null, screenStream=null;
+let audioOn=true, videoOn=true;
+let fsOpen=false, fsCtrlVisible=true, fsChatOpen=false, fsPipOn=false;
+let screenSharing=false, dualMode=false;
 
-        function toggleAudio() {
-            if (!currentStream) return;
-            audioEnabled = !audioEnabled;
-            currentStream.getAudioTracks().forEach(t => t.enabled = audioEnabled);
-            const icon = audioEnabled ? 'mic' : 'mic-off';
-            const color = audioEnabled ? 'text-zinc-500' : 'text-red-500';
-            ['mic-btn', 'fs-mic-btn'].forEach(id => {
-                const btn = document.getElementById(id);
-                if (btn) {
-                    btn.innerHTML = `<i data-lucide="${icon}" size="24"></i>`;
-                    btn.className = btn.className.replace(/text-(zinc-500|red-500)/g, '') + ' ' + color;
-                }
-            });
-            lucide.createIcons();
-        }
+/* ── Artifacts data ── */
+const ARTIFACTS=[
+  {label:'Harry Potter',    url:'https://img.icons8.com/color/240/harry-potter.png',       size:150},
+  {label:'Sorting Hat',     url:'https://img.icons8.com/color/240/sorting-hat.png',         size:155},
+  {label:'Hermione Granger',url:'https://img.icons8.com/color/240/hermione-granger.png',    size:150},
+  {label:'Dumbledore',      url:'https://img.icons8.com/color/240/albus-dumbledore.png',    size:155},
+  {label:'Voldemort',       url:'https://img.icons8.com/color/240/lord-voldemort.png',      size:150},
+  {label:'Ron Weasley',     url:'https://img.icons8.com/color/240/ron-weasley.png',         size:150},
+  {label:'Dobby',           url:'https://img.icons8.com/color/240/dobby.png',               size:140},
+  {label:'Magic Wand',      url:'https://img.icons8.com/emoji/240/magic-wand-emoji.png',   size:120},
+  {label:'Hedwig',          url:'https://img.icons8.com/color/240/owl--v1.png',             size:130},
+  {label:'Golden Snitch ✦', url:'https://img.icons8.com/color/240/gold-bars.png',           size:90,  gold:true},
+];
 
-        function toggleVideo() {
-            if (!currentStream) return;
-            videoEnabled = !videoEnabled;
-            currentStream.getVideoTracks().forEach(t => t.enabled = videoEnabled);
-            const icon = videoEnabled ? 'video' : 'video-off';
-            const color = videoEnabled ? 'text-zinc-500' : 'text-red-500';
-            ['cam-btn', 'fs-cam-btn'].forEach(id => {
-                const btn = document.getElementById(id);
-                if (btn) {
-                    btn.innerHTML = `<i data-lucide="${icon}" size="24"></i>`;
-                    btn.className = btn.className.replace(/text-(zinc-500|red-500)/g, '') + ' ' + color;
-                }
-            });
-            lucide.createIcons();
-        }
+/* build artifact menu */
+const artList=document.getElementById('art-list');
+ARTIFACTS.forEach(a=>{
+  const btn=document.createElement('button');
+  btn.className='w-full text-xs uppercase tracking-widest px-3 py-2.5 hover:bg-white/5 rounded-xl transition text-left flex items-center gap-3'+(a.gold?' text-amber-500':'');
+  btn.innerHTML=`<img src="${a.url}" class="w-8 h-8 object-contain flex-shrink-0" onerror="this.src='https://img.icons8.com/color/240/magic-hat.png'"/><span>${a.label}</span>`;
+  btn.addEventListener('click',()=>{ summon(a.url, a.size); toggleArtMenu(); });
+  artList.appendChild(btn);
+});
 
-        function summon(url, size) {
-            const artifact = document.createElement('div');
-            artifact.className = 'artifact';
-            artifact.style.width = size + 'px';
-            artifact.style.top = '80px';
-            artifact.style.left = '80px';
-            const img = document.createElement('img');
-            img.src = url;
-            artifact.appendChild(img);
-            artifact.ondblclick = () => artifact.remove();
-            makeMovable(artifact);
-            makeResizable(artifact);
-            localContainer.appendChild(artifact);
-            toggleArtifactsMenu();
-        }
+/* ── Role selection ── */
+document.getElementById('btn-wizard').addEventListener('click',()=>{
+  role='Wizard';
+  document.getElementById('btn-wizard').classList.add('active');
+  document.getElementById('btn-witch').classList.remove('active');
+});
+document.getElementById('btn-witch').addEventListener('click',()=>{
+  role='Witch';
+  document.getElementById('btn-witch').classList.add('active');
+  document.getElementById('btn-wizard').classList.remove('active');
+});
+document.getElementById('btn-wizard').classList.add('active');
 
-        function makeMovable(el) {
-            let ox, oy, startTop, startLeft;
-            function start(e) {
-                e.preventDefault();
-                const ev = e.touches ? e.touches[0] : e;
-                ox = ev.clientX; oy = ev.clientY;
-                startTop = el.offsetTop; startLeft = el.offsetLeft;
-                document.addEventListener('mousemove', move);
-                document.addEventListener('mouseup', stop);
-                document.addEventListener('touchmove', move, { passive: false });
-                document.addEventListener('touchend', stop);
-            }
-            function move(e) {
-                e.preventDefault();
-                const ev = e.touches ? e.touches[0] : e;
-                el.style.top = (startTop + ev.clientY - oy) + 'px';
-                el.style.left = (startLeft + ev.clientX - ox) + 'px';
-            }
-            function stop() {
-                document.removeEventListener('mousemove', move);
-                document.removeEventListener('mouseup', stop);
-                document.removeEventListener('touchmove', move);
-                document.removeEventListener('touchend', stop);
-            }
-            el.addEventListener('mousedown', start);
-            el.addEventListener('touchstart', start, { passive: false });
-        }
+/* ── Apparate ── */
+document.getElementById('apparate-btn').addEventListener('click',()=>{
+  const n=document.getElementById('user-name').value.trim();
+  const k=document.getElementById('platform-key').value.trim();
+  if(!n||!k){ alert("Identify yourself and enter the Marauder's Code."); return; }
+  myName=role+' '+n;
+  document.getElementById('display-name').innerText=myName;
+  document.getElementById('landing').style.display='none';
+  document.getElementById('portal').classList.add('active');
+  initCamera();
+});
 
-        function makeResizable(el) {
-            el.addEventListener('wheel', (e) => {
-                e.preventDefault();
-                let w = parseInt(el.style.width) || 100;
-                w = e.deltaY < 0 ? w + 10 : w - 10;
-                el.style.width = Math.max(40, w) + 'px';
-            });
-        }
+/* ── Camera ── */
+async function initCamera(){
+  try{
+    camStream=await navigator.mediaDevices.getUserMedia({video:true,audio:true});
+    document.getElementById('local-video').srcObject=camStream;
+    document.getElementById('remote-video').srcObject=camStream;
+  }catch(e){ alert('Ministry Alert: Camera access required.'); }
+}
 
-        function clearArtifacts() {
-            document.querySelectorAll('.artifact').forEach(a => a.remove());
-        }
+/* ── Mic / Cam toggles ── */
+function setMicIcon(on){
+  ['mic-btn','fs-mic-btn'].forEach(id=>{
+    const b=document.getElementById(id); if(!b)return;
+    b.innerHTML=`<i data-lucide="${on?'mic':'mic-off'}" size="22"></i>`;
+    b.className=b.className.replace(/text-(zinc-\d+|red-\d+)/g,'')+' '+(on?'text-zinc-500':'text-red-500');
+  });
+  lucide.createIcons();
+}
+function setCamIcon(on){
+  ['cam-btn','fs-cam-btn'].forEach(id=>{
+    const b=document.getElementById(id); if(!b)return;
+    b.innerHTML=`<i data-lucide="${on?'video':'video-off'}" size="22"></i>`;
+    b.className=b.className.replace(/text-(zinc-\d+|red-\d+)/g,'')+' '+(on?'text-zinc-500':'text-red-500');
+  });
+  lucide.createIcons();
+}
+document.getElementById('mic-btn').addEventListener('click',()=>{
+  if(!camStream)return;
+  audioOn=!audioOn;
+  camStream.getAudioTracks().forEach(t=>t.enabled=audioOn);
+  setMicIcon(audioOn);
+});
+document.getElementById('cam-btn').addEventListener('click',()=>{
+  if(!camStream)return;
+  videoOn=!videoOn;
+  camStream.getVideoTracks().forEach(t=>t.enabled=videoOn);
+  setCamIcon(videoOn);
+});
 
-        function toggleArtifactsMenu() {
-            const dd = document.getElementById('artifacts-dropdown');
-            dd.classList.toggle('hidden');
-            dd.classList.toggle('flex');
-        }
+/* ── Artifacts ── */
+function toggleArtMenu(){
+  const m=document.getElementById('art-menu');
+  m.classList.toggle('open');
+}
+document.getElementById('art-toggle-btn').addEventListener('click',e=>{ e.stopPropagation(); toggleArtMenu(); });
+document.addEventListener('click',e=>{
+  const w=document.getElementById('art-wrap');
+  if(!w.contains(e.target)){ document.getElementById('art-menu').classList.remove('open'); }
+});
+document.getElementById('clear-art-btn').addEventListener('click',clearArtifacts);
 
-        // Close artifacts dropdown when clicking outside
-        document.addEventListener('click', (e) => {
-            const wrapper = document.getElementById('artifacts-menu-wrapper');
-            if (wrapper && !wrapper.contains(e.target)) {
-                const dd = document.getElementById('artifacts-dropdown');
-                if (!dd.classList.contains('hidden')) {
-                    dd.classList.add('hidden');
-                    dd.classList.remove('flex');
-                }
-            }
-        });
+function summon(url,size){
+  const box=document.getElementById('local-box');
+  const el=document.createElement('div');
+  el.className='artifact';
+  el.style.cssText=`width:${size}px;top:60px;left:60px;`;
+  const img=document.createElement('img');
+  img.src=url;
+  img.onerror=()=>{ img.src='https://img.icons8.com/color/240/magic-hat.png'; };
+  el.appendChild(img);
+  el.addEventListener('dblclick',()=>el.remove());
+  makeDraggable(el);
+  makeWheelResize(el);
+  box.appendChild(el);
+}
+function clearArtifacts(){ document.querySelectorAll('.artifact').forEach(a=>a.remove()); }
 
-        function sendMessage() {
-            const inp = document.getElementById('chat-input');
-            const msg = inp.value.trim();
-            if (!msg) return;
-            const stream = document.getElementById('chat-stream');
-            // Remove placeholder if present
-            const placeholder = stream.querySelector('p');
-            if (placeholder) placeholder.remove();
+/* ── Draggable helper ── */
+function makeDraggable(el){
+  let ox,oy,st,sl;
+  function down(e){
+    if(e.target.id&&e.target.id.includes('resize'))return;
+    e.preventDefault();
+    const ev=e.touches?e.touches[0]:e;
+    ox=ev.clientX; oy=ev.clientY; st=el.offsetTop; sl=el.offsetLeft;
+    document.addEventListener('mousemove',move);
+    document.addEventListener('mouseup',up);
+    document.addEventListener('touchmove',move,{passive:false});
+    document.addEventListener('touchend',up);
+  }
+  function move(e){
+    e.preventDefault();
+    const ev=e.touches?e.touches[0]:e;
+    el.style.top=(st+ev.clientY-oy)+'px';
+    el.style.left=(sl+ev.clientX-ox)+'px';
+  }
+  function up(){
+    document.removeEventListener('mousemove',move);
+    document.removeEventListener('mouseup',up);
+    document.removeEventListener('touchmove',move);
+    document.removeEventListener('touchend',up);
+  }
+  el.addEventListener('mousedown',down);
+  el.addEventListener('touchstart',down,{passive:false});
+}
+function makeWheelResize(el){
+  el.addEventListener('wheel',e=>{
+    e.preventDefault();
+    let w=parseInt(el.style.width)||100;
+    w=e.deltaY<0?w+10:w-10;
+    el.style.width=Math.max(40,w)+'px';
+  },{passive:false});
+}
 
-            const name = document.getElementById('display-full-name').innerText || 'You';
-            const div = document.createElement('div');
-            div.className = 'chat-msg';
-            div.innerHTML = `<div class="sender">${name}</div><div class="text-zinc-300">${msg}</div>`;
-            stream.appendChild(div);
-            stream.scrollTop = stream.scrollHeight;
-            inp.value = '';
-        }
+/* ── Resizable corner helper ── */
+function makeResizableEl(el,handleId){
+  const h=document.getElementById(handleId);
+  if(!h)return;
+  let sx,sy,sw,sh;
+  function down(e){
+    e.preventDefault(); e.stopPropagation();
+    const ev=e.touches?e.touches[0]:e;
+    sx=ev.clientX; sy=ev.clientY;
+    sw=el.offsetWidth; sh=el.offsetHeight;
+    document.addEventListener('mousemove',move);
+    document.addEventListener('mouseup',up);
+    document.addEventListener('touchmove',move,{passive:false});
+    document.addEventListener('touchend',up);
+  }
+  function move(e){
+    e.preventDefault();
+    const ev=e.touches?e.touches[0]:e;
+    const nw=Math.max(80,sw+(ev.clientX-sx));
+    const nh=Math.max(60,sh+(ev.clientY-sy));
+    el.style.width=nw+'px';
+    el.style.height=nh+'px';
+  }
+  function up(){
+    document.removeEventListener('mousemove',move);
+    document.removeEventListener('mouseup',up);
+    document.removeEventListener('touchmove',move);
+    document.removeEventListener('touchend',up);
+  }
+  h.addEventListener('mousedown',down);
+  h.addEventListener('touchstart',down,{passive:false});
+}
 
-        function enterFocus() { if (companionBox.requestFullscreen) companionBox.requestFullscreen(); }
-        function exitFocus() { if (document.fullscreenElement) document.exitFullscreen(); }
-        function toggleImmersive() { companionBox.classList.toggle('immersive-active'); }
+/* ── Screen Share ── */
+document.getElementById('screen-btn').addEventListener('click', async()=>{
+  if(screenSharing){ stopScreenShare(); return; }
+  try{
+    screenStream=await navigator.mediaDevices.getDisplayMedia({video:true,audio:false});
+    screenSharing=true;
+    document.getElementById('local-video').srcObject=screenStream;
+    document.getElementById('screen-btn').classList.replace('text-zinc-500','text-amber-400');
+    document.getElementById('dual-btn').classList.remove('hidden');
+    screenStream.getVideoTracks()[0].addEventListener('ended',stopScreenShare);
+    // Show corner pip with cam by default in dual mode
+    showDualPip();
+  }catch(e){ if(e.name!=='NotAllowedError') alert('Screen share failed.'); }
+});
 
-        function mischiefManaged() {
-            if (confirm("Mischief Managed?")) {
-                if (currentStream) currentStream.getTracks().forEach(t => t.stop());
-                location.reload();
-            }
-        }
+function stopScreenShare(){
+  if(screenStream){ screenStream.getTracks().forEach(t=>t.stop()); screenStream=null; }
+  screenSharing=false;
+  dualMode=false;
+  document.getElementById('local-video').srcObject=camStream;
+  document.getElementById('screen-btn').classList.replace('text-amber-400','text-zinc-500');
+  document.getElementById('dual-btn').classList.add('hidden');
+  hideCornerPip();
+}
 
-        document.addEventListener('fullscreenchange', () => {
-            const isFS = !!document.fullscreenElement;
-            document.getElementById('focus-bar').classList.toggle('hidden', !isFS);
-            document.getElementById('immersive-toggle').classList.toggle('hidden', !isFS);
-            document.getElementById('bottom-nav').classList.toggle('hidden', isFS);
-            document.getElementById('sidebar').classList.toggle('hidden', isFS);
-        });
+/* ── Dual mode: screen + camera corner PiP ── */
+document.getElementById('dual-btn').addEventListener('click',()=>{
+  dualMode=!dualMode;
+  dualMode?showDualPip():hideCornerPip();
+});
 
-        setRole('Wizard');
+function showDualPip(){
+  dualMode=true;
+  const cp=document.getElementById('corner-pip');
+  const cv=document.getElementById('corner-video');
+  cv.srcObject=camStream;
+  cv.autoplay=true; cv.muted=true; cv.playsInline=true;
+  cp.style.cssText='display:block;width:180px;height:120px;bottom:12px;right:12px;top:auto;left:auto;';
+  makeDraggable(cp);
+  makeResizableEl(cp,'corner-resize');
+  document.getElementById('dual-btn').querySelector('i').setAttribute('data-lucide','picture-in-picture');
+  lucide.createIcons();
+}
+function hideCornerPip(){
+  const cp=document.getElementById('corner-pip');
+  cp.style.display='none';
+}
 
-        document.getElementById('btn-wizard').addEventListener('click', () => setRole('Wizard'));
-        document.getElementById('btn-witch').addEventListener('click', () => setRole('Witch'));
-    </script>
+/* ── Fullscreen Overlay ── */
+document.getElementById('open-fs-btn').addEventListener('click',openFS);
+function openFS(){
+  fsOpen=true;
+  const ov=document.getElementById('fs-overlay');
+  ov.classList.add('active');
+  const fv=document.getElementById('fs-main-video');
+  fv.srcObject=document.getElementById('remote-video').srcObject;
+
+  // Move pip into fs overlay if active
+  setupFsPip();
+  lucide.createIcons();
+}
+
+document.getElementById('fs-exit-btn').addEventListener('click',closeFS);
+function closeFS(){
+  fsOpen=false;
+  document.getElementById('fs-overlay').classList.remove('active');
+  fsPipOn=false;
+  document.getElementById('fs-controls').classList.remove('hidden-ctrl');
+  fsCtrlVisible=true;
+  fsChatOpen=false;
+  document.getElementById('fs-chat-panel').style.display='none';
+}
+
+/* toggle controls in FS */
+document.getElementById('fs-hint').addEventListener('click',()=>{
+  fsCtrlVisible=!fsCtrlVisible;
+  document.getElementById('fs-controls').classList.toggle('hidden-ctrl',!fsCtrlVisible);
+});
+
+/* FS mic / cam */
+document.getElementById('fs-mic-btn').addEventListener('click',()=>{
+  if(!camStream)return;
+  audioOn=!audioOn;
+  camStream.getAudioTracks().forEach(t=>t.enabled=audioOn);
+  setMicIcon(audioOn);
+});
+document.getElementById('fs-cam-btn').addEventListener('click',()=>{
+  if(!camStream)return;
+  videoOn=!videoOn;
+  camStream.getVideoTracks().forEach(t=>t.enabled=videoOn);
+  setCamIcon(videoOn);
+});
+
+/* FS chat toggle */
+document.getElementById('fs-chat-toggle').addEventListener('click',()=>{
+  fsChatOpen=!fsChatOpen;
+  document.getElementById('fs-chat-panel').style.display=fsChatOpen?'flex':'none';
+  if(fsChatOpen) syncFsChat();
+});
+
+/* FS pip toggle */
+document.getElementById('fs-pip-toggle').addEventListener('click',()=>{
+  fsPipOn=!fsPipOn;
+  setupFsPip();
+});
+
+function setupFsPip(){
+  // Create/update a floating self-view inside fs-video-wrap
+  const wrap=document.getElementById('fs-video-wrap');
+  let pip=wrap.querySelector('.fs-pip-el');
+  if(fsPipOn&&fsOpen){
+    if(!pip){
+      pip=document.createElement('div');
+      pip.className='fs-pip-el';
+      pip.style.cssText='position:absolute;width:160px;height:110px;bottom:100px;right:20px;border-radius:1rem;overflow:hidden;background:#000;border:2px solid rgba(163,133,75,.35);z-index:95;cursor:move;min-width:80px;min-height:60px;';
+      const v=document.createElement('video');
+      v.autoplay=true; v.muted=true; v.playsInline=true;
+      v.style.cssText='width:100%;height:100%;object-fit:cover;transform:scaleX(-1);';
+      v.srcObject=camStream;
+      pip.appendChild(v);
+      // resize handle
+      const rh=document.createElement('div');
+      rh.id='fs-pip-resize';
+      rh.style.cssText='position:absolute;bottom:0;right:0;width:16px;height:16px;cursor:se-resize;background:linear-gradient(135deg,transparent 50%,rgba(163,133,75,.6) 50%);';
+      pip.appendChild(rh);
+      wrap.appendChild(pip);
+      makeDraggable(pip);
+      // inline resize
+      let sx,sy,sw,sh;
+      rh.addEventListener('mousedown',e=>{
+        e.preventDefault(); e.stopPropagation();
+        sx=e.clientX; sy=e.clientY; sw=pip.offsetWidth; sh=pip.offsetHeight;
+        const mm=e2=>{ pip.style.width=Math.max(80,sw+(e2.clientX-sx))+'px'; pip.style.height=Math.max(60,sh+(e2.clientY-sy))+'px'; };
+        const mu=()=>{ document.removeEventListener('mousemove',mm); document.removeEventListener('mouseup',mu); };
+        document.addEventListener('mousemove',mm); document.addEventListener('mouseup',mu);
+      });
+    }
+    pip.style.display='block';
+  } else if(pip){
+    pip.style.display='none';
+  }
+}
+
+/* ── Chat ── */
+const chatMessages=[];
+function sendMsg(text, stream, inputEl){
+  if(!text)return;
+  chatMessages.push({name:myName,text});
+  appendMsg(stream,myName,text);
+  if(inputEl) inputEl.value='';
+  // sync both streams
+  syncFsChat();
+}
+function appendMsg(stream,name,text){
+  const ph=stream.querySelector('[data-placeholder]')||stream.querySelector('p');
+  if(ph) ph.remove();
+  const d=document.createElement('div');
+  d.className='chat-msg';
+  d.innerHTML=`<div class="chat-sender">${name}</div><div class="text-zinc-300 text-sm">${text}</div>`;
+  stream.appendChild(d);
+  stream.scrollTop=stream.scrollHeight;
+}
+function syncFsChat(){
+  const fs=document.getElementById('fs-chat-stream');
+  fs.innerHTML='';
+  chatMessages.forEach(m=>appendMsg(fs,m.name,m.text));
+}
+
+document.getElementById('send-btn').addEventListener('click',()=>{
+  const inp=document.getElementById('chat-input');
+  sendMsg(inp.value.trim(), document.getElementById('chat-stream'), inp);
+});
+document.getElementById('chat-input').addEventListener('keydown',e=>{
+  if(e.key==='Enter'){ const inp=e.target; sendMsg(inp.value.trim(),document.getElementById('chat-stream'),inp); }
+});
+document.getElementById('fs-send-btn').addEventListener('click',()=>{
+  const inp=document.getElementById('fs-chat-input');
+  sendMsg(inp.value.trim(),document.getElementById('fs-chat-stream'),inp);
+  syncFsChat();
+  // also push to main
+  const ms=document.getElementById('chat-stream');
+  const ph=ms.querySelector('p'); if(ph)ph.remove();
+  chatMessages.forEach(m=>{ /* already appended via syncFsChat */ });
+});
+document.getElementById('fs-chat-input').addEventListener('keydown',e=>{
+  if(e.key==='Enter'){
+    const inp=e.target;
+    sendMsg(inp.value.trim(),document.getElementById('fs-chat-stream'),inp);
+  }
+});
+
+/* ── Leave ── */
+document.getElementById('leave-btn').addEventListener('click',()=>{
+  if(confirm('Mischief Managed?')){
+    if(camStream) camStream.getTracks().forEach(t=>t.stop());
+    if(screenStream) screenStream.getTracks().forEach(t=>t.stop());
+    location.reload();
+  }
+});
+</script>
 </body>
 </html>
